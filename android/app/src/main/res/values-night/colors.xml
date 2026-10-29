@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="paper">#171512</color>
+    <color name="card">#211F1B</color>
+    <color name="ink">#EDE7DD</color>
+    <color name="ink2">#B3AA9D</color>
+    <color name="ink3">#7D756A</color>
+    <color name="sage">#7DB8A2</color>
+    <color name="sage_soft">#22332C</color>
+    <color name="amber">#E2B66A</color>
+    <color name="amber_soft">#3A3020</color>
+    <color name="clay">#D9927A</color>
+</resources>

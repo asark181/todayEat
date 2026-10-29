@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <group android:rotation="-38" android:pivotX="54" android:pivotY="54">
+        <!-- 胶囊上半：白 -->
+        <path android:fillColor="#FFFFFF"
+            android:pathData="M44,54 L44,40 A10,10 0 0,1 64,40 L64,54 Z" />
+        <!-- 胶囊下半：浅米 -->
+        <path android:fillColor="#FBF3E6"
+            android:pathData="M44,54 L64,54 L64,68 A10,10 0 0,1 44,68 Z" />
+        <path android:fillColor="#2B2722" android:fillAlpha="0.08"
+            android:pathData="M44,53.2h20v1.6h-20z" />
+    </group>
+</vector>
