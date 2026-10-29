@@ -140,57 +140,50 @@
   .status { display: flex; justify-content: space-between; color: var(--ink); font-size: 11px; font-weight: 500; padding: 0 6px; }
   .status i { display: inline-block; width: 18px; height: 8px; border: 1px solid var(--ink2); border-radius: 2px; position: relative; top: 1px; }
   .status i::after { content: ""; position: absolute; inset: 1px 4px 1px 1px; background: var(--ink2); border-radius: 1px; }
-  .date { margin: 14px 2px 8px; color: var(--ink2); font-size: 12px; }
-  .today {
-    background: var(--card);
-    border-radius: 20px;
-    padding: 18px 16px 16px;
-    box-shadow: 0 1px 2px rgba(43, 39, 34, .05);
+  .top { display: flex; align-items: center; justify-content: space-between; margin: 14px 2px 10px; }
+  .top b { font-size: 13px; font-weight: 600; }
+  .seg { display: flex; padding: 2px; border-radius: 9px; background: var(--line); font-size: 10.5px; }
+  .seg span { padding: 3px 9px; border-radius: 7px; color: var(--ink2); }
+  .seg span.on { background: var(--card); color: var(--ink); font-weight: 600; }
+  .week { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 9px; color: var(--ink3); }
+  .week i {
+    display: grid; place-items: center; margin: 4px auto 0;
+    width: 22px; height: 22px; border-radius: 50%;
+    font-style: normal; font-size: 10px; font-variant-numeric: tabular-nums;
   }
-  .tick {
-    width: 34px; height: 34px; border-radius: 50%;
+  .week i.t { background: var(--sage); color: var(--sage-on); }
+  .week i.now { box-shadow: 0 0 0 1.5px var(--ink); }
+  .week i.f { color: var(--ink3); }
+  .big-btn {
+    margin: 22px auto 0;
+    width: 132px; height: 132px; border-radius: 50%;
     background: var(--sage-soft); color: var(--sage);
-    display: grid; place-items: center;
+    display: grid; place-items: center; align-content: center; gap: 2px;
+    font-size: 15px; font-weight: 600;
   }
-  .tick svg { width: 18px; height: 18px; }
-  .today .big { margin: 12px 0 0; font-size: 22px; font-weight: 700; line-height: 1.3; letter-spacing: .02em; }
-  .today .sub { margin: 4px 0 0; color: var(--sage); font-size: 14px; font-weight: 500; }
-  .pill {
-    margin-top: 12px; padding-top: 12px;
-    border-top: 1px solid var(--line);
-    display: flex; align-items: center; gap: 10px;
-    font-size: 12px; color: var(--ink2);
+  .big-btn svg { width: 46px; height: 46px; }
+  .when { margin: 10px 0 0; text-align: center; color: var(--ink2); font-size: 11.5px; }
+  .rec-h { display: flex; justify-content: space-between; margin: 18px 2px 6px; font-size: 11.5px; font-weight: 600; }
+  .rec-h span { color: var(--sage); font-weight: 400; }
+  .rec {
+    background: var(--card); border-radius: 14px; padding: 10px 12px;
+    display: flex; align-items: center; gap: 10px; font-size: 11.5px; color: var(--ink);
   }
+  .rec + .rec { margin-top: 6px; }
+  .rec .t { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; min-width: 40px; }
+  .rec small { display: block; color: var(--ink2); font-size: 10.5px; }
   .thumb {
-    flex: none; width: 34px; height: 34px; border-radius: 8px;
+    flex: none; width: 28px; height: 28px; border-radius: 7px; margin-left: auto;
     background:
-      radial-gradient(circle at 30% 35%, #fff 0 4px, transparent 5px),
-      radial-gradient(circle at 62% 35%, #fff 0 4px, transparent 5px),
-      radial-gradient(circle at 30% 68%, #fff 0 4px, transparent 5px),
-      radial-gradient(circle at 62% 68%, var(--line) 0 4px, transparent 5px),
+      radial-gradient(circle at 30% 35%, #fff 0 3px, transparent 4px),
+      radial-gradient(circle at 62% 35%, #fff 0 3px, transparent 4px),
+      radial-gradient(circle at 30% 68%, #fff 0 3px, transparent 4px),
+      radial-gradient(circle at 62% 68%, var(--line) 0 3px, transparent 4px),
       #C9D6CF;
   }
-  .pill b { display: block; color: var(--ink); font-weight: 500; font-size: 13px; }
-  .streak { margin: 10px 2px 0; color: var(--ink3); font-size: 11.5px; }
+  .tabs { display: flex; justify-content: space-around; margin: 16px -16px -6px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 11px; color: var(--ink3); }
+  .tabs b { color: var(--ink); font-weight: 600; }
 
-  .cal { margin-top: 12px; background: var(--card); border-radius: 18px; padding: 12px 12px 10px; }
-  .cal-h { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; font-weight: 500; margin: 0 2px 8px; }
-  .cal-h span { color: var(--ink3); font-weight: 400; font-size: 11px; }
-  .grid7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-  .grid7 .w { text-align: center; color: var(--ink3); font-size: 9.5px; line-height: 16px; }
-  .d {
-    aspect-ratio: 1;
-    border-radius: 7px;
-    display: grid; place-items: center;
-    font-size: 10px; line-height: 1;
-    font-variant-numeric: tabular-nums;
-    color: var(--ink3);
-  }
-  .d.t { background: var(--sage-soft); color: var(--sage); }
-  .d.p { background: var(--amber-soft); color: var(--amber); }
-  .d.m { background: var(--clay-soft); color: var(--clay); }
-  .d.f { color: var(--ink3); background: transparent; border: 1px dashed var(--line); }
-  .d.now { background: var(--sage); color: var(--sage-on); font-weight: 700; }
 
   /* 区块 */
   section.block { margin-top: 72px; }
@@ -222,21 +215,6 @@
   .noti b { display: block; margin-top: 4px; font-weight: 500; color: var(--ink); }
   .noti span { color: var(--ink2); }
   .noti .acts { margin-top: 8px; display: flex; gap: 18px; font-weight: 500; color: var(--sage); font-size: 13px; }
-
-  /* 小组件示意 */
-  .widget {
-    width: 132px; height: 132px;
-    border-radius: 24px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    padding: 14px;
-    display: flex; flex-direction: column; justify-content: space-between;
-  }
-  .widget small { color: var(--ink3); font-size: 12px; }
-  .widget strong { display: block; color: var(--sage); font-size: 26px; line-height: 1.1; font-variant-numeric: tabular-nums; }
-  .widget span { color: var(--ink2); font-size: 13px; }
-  .widgets { display: flex; gap: 12px; flex-wrap: wrap; }
-  .widget.no strong { color: var(--clay); font-size: 20px; }
 
   .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--ink2); }
   .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; margin-right: 6px; vertical-align: -1px; }
@@ -344,33 +322,23 @@
       </div>
     </div>
 
-    <div class="stage" aria-label="App 首页示意">
+    <div class="stage" aria-label="App 打卡页示意">
       <div class="phone">
         <div class="screen">
           <div class="status num"><span>06:41</span><i></i></div>
-          <p class="date num">10 月 29 日 · 周四</p>
-          <div class="today">
-            <div class="tick"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 10.5 3.2 3.2L15 7"/></svg></div>
-            <p class="big">今天的药吃过了</p>
-            <p class="sub num">06:32 · 安心再睡会儿</p>
-            <div class="pill">
-              <span class="thumb" aria-hidden="true"></span>
-              <span><b>术后用药 · 1 片</b>提醒 06:30 · 附 1 张照片</span>
-            </div>
+          <div class="top"><b class="num">10月29日 周四</b><div class="seg"><span class="on">打卡</span><span>日历</span></div></div>
+          <div class="week num" aria-hidden="true">
+            <div>一<i class="t">26</i></div><div>二<i class="t">27</i></div><div>三<i class="t">28</i></div><div>今<i class="t now">29</i></div>
+            <div>五<i class="f">30</i></div><div>六<i class="f">31</i></div><div>日<i class="f">1</i></div>
           </div>
-          <p class="streak num">连续 182 天没落下</p>
-          <div class="cal">
-            <div class="cal-h"><b>2026 年 10 月</b><span>点某天看详情</span></div>
-            <div class="grid7" aria-hidden="true">
-              <div class="w">一</div><div class="w">二</div><div class="w">三</div><div class="w">四</div><div class="w">五</div><div class="w">六</div><div class="w">日</div>
-              <div></div><div></div><div></div>
-              <div class="d t">1</div><div class="d t">2</div><div class="d t">3</div><div class="d t">4</div>
-              <div class="d t">5</div><div class="d t">6</div><div class="d p">7</div><div class="d t">8</div><div class="d t">9</div><div class="d t">10</div><div class="d t">11</div>
-              <div class="d m">12</div><div class="d t">13</div><div class="d t">14</div><div class="d t">15</div><div class="d t">16</div><div class="d t">17</div><div class="d t">18</div>
-              <div class="d t">19</div><div class="d t">20</div><div class="d t">21</div><div class="d p">22</div><div class="d t">23</div><div class="d t">24</div><div class="d t">25</div>
-              <div class="d t">26</div><div class="d t">27</div><div class="d t">28</div><div class="d now">29</div><div class="d f">30</div><div class="d f">31</div>
-            </div>
+          <div class="big-btn">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 10.5 3.2 3.2L15 7"/></svg>
+            已打卡
           </div>
+          <p class="when num">06:32 打卡</p>
+          <div class="rec-h"><b>今天的记录</b><span>＋ 添加</span></div>
+          <div class="rec"><span class="t">06:32</span><span>术后用药 · 1 片<small>饭后吃的</small></span><span class="thumb" aria-hidden="true"></span></div>
+          <div class="tabs"><b>我的</b><span>设置</span></div>
         </div>
       </div>
     </div>
@@ -384,40 +352,35 @@
     <div class="features">
       <article class="feat wide">
         <h3>到点提醒，通知上按一下就记上</h3>
-        <p>每种药单独设提醒时间和频率：每天、工作日、周末、自选星期，或者每隔几天。半睡半醒时不用打开 App，在通知上点「已吃」就行。没点的话，过 10 分钟再提醒一次，最多 3 次，间隔可以改。</p>
+        <p>每种药单独设提醒时间和频率：每天、工作日、周末、指定星期，或者隔天。半睡半醒时不用打开 App，在通知上点「已吃」就行。没点的话，过 10 分钟再提醒一次，最多 3 次，间隔可以改。</p>
         <div class="demo">
           <div class="noti">
             <div class="app"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#logo"/></svg>吃了吗 · <span class="num">06:30</span></div>
             <b>该吃药了</b>
-            <span>术后用药 · 1 片</span>
-            <div class="acts"><span>已吃</span><span>10 分钟后再提醒</span></div>
+            <span class="num">06:30 · 术后用药 · 1 片</span>
+            <div class="acts"><span>已吃</span><span>10 分钟后提醒</span></div>
           </div>
         </div>
       </article>
 
       <article class="feat">
-        <h3>桌面小组件</h3>
-        <p>2×2 大小，放在桌面上。醒来不用解锁进 App，看一眼就知道。点一下打开 App。</p>
-        <div class="demo widgets">
-          <div class="widget"><small>今天</small><div><strong>06:32</strong><span>已吃</span></div></div>
-          <div class="widget no"><small>今天</small><div><strong>还没吃</strong><span class="num">提醒 06:30</span></div></div>
-        </div>
+        <h3>一个大按钮打卡</h3>
+        <p>打开就是打卡页，中间一个大圆按钮，按一下就记上。上面一排是本周七天，哪天吃了一眼就能看出来。</p>
       </article>
 
       <article class="feat">
         <h3>日历上看每一天</h3>
-        <p>一个月一页，每天一个格子。点哪天就看哪天的时间和照片，忘了点的可以补记，点错了可以撤销、改时间。</p>
+        <p>和打卡页是同一份记录，换成月历看。点哪天就看哪天的记录：一天可以记多条，每条都能添加、修改、删除。</p>
         <div class="demo legend">
-          <span><i style="background:var(--sage-soft);box-shadow:inset 0 0 0 1px var(--sage)"></i>吃了</span>
-          <span><i style="background:var(--amber-soft);box-shadow:inset 0 0 0 1px var(--amber)"></i>吃了一部分</span>
-          <span><i style="background:var(--clay-soft);box-shadow:inset 0 0 0 1px var(--clay)"></i>漏了</span>
-          <span><i style="border:1px dashed var(--ink3)"></i>不用吃 / 还没到</span>
+          <span><i style="background:var(--sage)"></i>已吃</span>
+          <span><i style="background:var(--amber-soft);box-shadow:inset 0 0 0 1px var(--amber)"></i>部分</span>
+          <span><i style="background:var(--clay-soft);box-shadow:inset 0 0 0 1px var(--clay)"></i>漏吃</span>
         </div>
       </article>
 
       <article class="feat">
         <h3>拍一张留底</h3>
-        <p>打卡时顺手拍下药板或药盒，一天最多 4 张。醒来翻照片，抠掉的那一格就是证据。</p>
+        <p>每条记录可以附照片，拍药板或药盒都行，最多 4 张。</p>
       </article>
 
       <article class="feat">
