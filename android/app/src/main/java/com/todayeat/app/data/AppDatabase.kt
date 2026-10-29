@@ -20,6 +20,9 @@ interface PlanDao {
     @Query("SELECT * FROM plans")
     suspend fun all(): List<PlanEntity>
 
+    @Query("SELECT * FROM plans")
+    fun observeAll(): Flow<List<PlanEntity>>
+
     @Query("SELECT * FROM plans WHERE uid = :uid")
     suspend fun byUid(uid: String): PlanEntity?
 
@@ -35,10 +38,10 @@ interface PlanDao {
 
 @Dao
 interface DoseDao {
-    @Query("SELECT * FROM doses WHERE deleted = 0 AND date BETWEEN :from AND :to ORDER BY takenAt")
+    @Query("SELECT * FROM doses WHERE deleted = 0 AND date BETWEEN :from AND :to ORDER BY date, takenAt")
     fun observeRange(from: String, to: String): Flow<List<DoseEntity>>
 
-    @Query("SELECT * FROM doses WHERE deleted = 0 AND date BETWEEN :from AND :to ORDER BY takenAt")
+    @Query("SELECT * FROM doses WHERE deleted = 0 AND date BETWEEN :from AND :to ORDER BY date, takenAt")
     suspend fun range(from: String, to: String): List<DoseEntity>
 
     @Query("SELECT * FROM doses WHERE deleted = 0 AND planUid = :planUid AND date = :date LIMIT 1")
@@ -49,9 +52,6 @@ interface DoseDao {
 
     @Query("SELECT * FROM doses")
     suspend fun all(): List<DoseEntity>
-
-    @Query("SELECT MIN(date) FROM doses WHERE deleted = 0")
-    fun observeFirstDate(): Flow<String?>
 
     @Query("SELECT COUNT(*) FROM doses WHERE deleted = 0")
     suspend fun count(): Int

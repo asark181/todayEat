@@ -102,7 +102,7 @@ class SyncApi(private val baseUrl: String) {
         return detail?.takeIf { it.isNotBlank() } ?: when (conn.responseCode) {
             401 -> "登录已失效，请重新登录"
             404 -> "服务器上没有这个接口"
-            in 500..599 -> "服务器出了点问题，稍后再试"
+            in 500..599 -> "服务器错误，请稍后再试"
             else -> "请求失败（${conn.responseCode}）"
         }
     }

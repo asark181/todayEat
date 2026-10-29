@@ -50,7 +50,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.unit.dp
-import com.todayeat.app.ui.calendar.CalendarScreen
 import com.todayeat.app.ui.common.LocalViewer
 import com.todayeat.app.ui.common.UpdatePanel
 import com.todayeat.app.ui.common.Viewer
@@ -60,14 +59,14 @@ import com.todayeat.app.ui.components.SheetHost
 import com.todayeat.app.ui.components.Sheets
 import com.todayeat.app.ui.components.ToastHost
 import com.todayeat.app.ui.components.Toasts
-import com.todayeat.app.ui.home.HomeScreen
-import com.todayeat.app.ui.me.MeScreen
+import com.todayeat.app.ui.mine.MineScreen
+import com.todayeat.app.ui.settings.SettingsScreen
 import com.todayeat.app.ui.onboarding.Onboarding
 import com.todayeat.app.ui.theme.T
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-private val TABS = listOf("今天", "日历", "我的")
+private val TABS = listOf("我的", "设置")
 
 @Composable
 fun Root(vm: AppViewModel, openUpdate: Boolean) {
@@ -77,12 +76,11 @@ fun Root(vm: AppViewModel, openUpdate: Boolean) {
     val c = T.c
     val onboarded by vm.onboarded.collectAsState()
     val plans by vm.plans.collectAsState()
-    val home by vm.home.collectAsState()
     val update by vm.app.updates.ui.collectAsState()
     var tab by rememberSaveable { mutableIntStateOf(0) }
 
     val notifLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
-        if (!ok) toasts.show("没有通知权限就收不到提醒，可以在「我的」里再开")
+        if (!ok) toasts.show("未开启通知，将收不到提醒")
         vm.tick()
     }
     val askNotifications = {
@@ -92,9 +90,9 @@ fun Root(vm: AppViewModel, openUpdate: Boolean) {
     // 有新版本且需要弹出时，用底部面板展示
     LaunchedEffect(update?.sheet, openUpdate) {
         if (update?.sheet == true || (openUpdate && update != null)) {
-            sheets.show(onDismiss = { vm.app.updates.dismissSheet() }) { _ ->
+            sheets.show(onDismiss = { vm.app.updates.dismissSheet() }) { close ->
                 val live by vm.app.updates.ui.collectAsState()
-                live?.let { UpdatePanel(it, vm.app.updates) }
+                live?.let { UpdatePanel(it, vm.app.updates, close) }
             }
         }
     }
@@ -107,9 +105,8 @@ fun Root(vm: AppViewModel, openUpdate: Boolean) {
                 val barHeight = 72.dp
                 Crossfade(tab, label = "tab") { t ->
                     when (t) {
-                        0 -> HomeScreen(vm, home, plans, barHeight)
-                        1 -> CalendarScreen(vm, barHeight)
-                        else -> MeScreen(vm, barHeight, askNotifications)
+                        0 -> MineScreen(vm, barHeight)
+                        else -> SettingsScreen(vm, barHeight, askNotifications)
                     }
                 }
                 if (tab != 0) BackHandler { tab = 0 }
@@ -142,7 +139,7 @@ private fun BottomBar(selected: Int, hasUpdate: Boolean, modifier: Modifier, onS
                         Box(Modifier.size(width = if (on) 16.dp else 4.dp, height = 4.dp).clip(CircleShape)
                             .background(if (on) c.sage else Color.Transparent))
                     }
-                    if (i == 2 && hasUpdate) {
+                    if (i == 1 && hasUpdate) {
                         Box(Modifier.align(Alignment.TopCenter).padding(top = 14.dp).offset(x = 22.dp).size(7.dp).clip(CircleShape).background(c.clay))
                     }
                 }
@@ -182,7 +179,7 @@ private fun PhotoViewer(viewer: Viewer) {
                 Image(it, null, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize().graphicsLayer {
                     scaleX = scale; scaleY = scale; translationX = dx; translationY = dy
                 })
-            } ?: Text("正在取照片…", style = T.small, color = Color.White.copy(alpha = 0.7f))
+            } ?: Text("加载中…", style = T.small, color = Color.White.copy(alpha = 0.7f))
         }
     }
 }

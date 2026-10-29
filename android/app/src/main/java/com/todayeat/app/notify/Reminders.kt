@@ -41,7 +41,6 @@ object Reminders {
     const val ACTION_FIRE = "com.todayeat.app.FIRE"
     const val ACTION_TAKEN = "com.todayeat.app.TAKEN"
     const val ACTION_SNOOZE = "com.todayeat.app.SNOOZE"
-    const val ACTION_MIDNIGHT = "com.todayeat.app.MIDNIGHT"
     const val EXTRA_PLAN = "plan"
     const val EXTRA_DATE = "date"
     const val EXTRA_ATTEMPT = "attempt"
@@ -50,7 +49,7 @@ object Reminders {
         val nm = context.getSystemService(NotificationManager::class.java)
         nm.createNotificationChannel(
             NotificationChannel(CHANNEL, "吃药提醒", NotificationManager.IMPORTANCE_HIGH).apply {
-                description = "到点提醒吃药，没点「已吃」会再提醒"
+                description = "到点提醒吃药"
                 enableVibration(true)
                 vibrationPattern = longArrayOf(0, 400, 200, 400)
                 lockscreenVisibility = android.app.Notification.VISIBILITY_PUBLIC
@@ -58,7 +57,7 @@ object Reminders {
         )
         nm.createNotificationChannel(
             NotificationChannel(CHANNEL_DONE, "记录确认", NotificationManager.IMPORTANCE_LOW).apply {
-                description = "在通知里点了「已吃」之后的确认，几秒后自动消失"
+                description = "点「已吃」后的确认"
             }
         )
     }
@@ -86,7 +85,6 @@ object Reminders {
     /** 重排全部计划的主提醒；删掉或停用的计划取消闹钟 */
     fun rescheduleAll(context: Context, plans: List<PlanEntity>, now: LocalDateTime = LocalDateTime.now()) {
         plans.forEach { schedule(context, it, now) }
-        scheduleMidnight(context)
     }
 
     fun schedule(context: Context, plan: PlanEntity, now: LocalDateTime = LocalDateTime.now()) {
@@ -123,12 +121,6 @@ object Reminders {
         alarms(context).cancel(broadcast(context, ACTION_FIRE, planUid, 1))
     }
 
-    /** 每天 00:01 刷新小组件（日期变了，「今天」要换） */
-    fun scheduleMidnight(context: Context) {
-        val next = LocalDate.now().plusDays(1).atTime(0, 1)
-        val pi = broadcast(context, ACTION_MIDNIGHT, "midnight", 2)
-        alarms(context).setAndAllowWhileIdle(AlarmManager.RTC, epoch(next), pi)
-    }
 
     fun canNotify(context: Context): Boolean =
         (Build.VERSION.SDK_INT < 33 ||
@@ -137,10 +129,8 @@ object Reminders {
 
     fun showDue(context: Context, plan: PlanEntity, date: String, attempt: Int) {
         if (!canNotify(context)) return
-        val title = if (attempt == 0) "该吃药了" else "${plan.name}还没记上"
-        val what = plan.name + if (plan.dose.isNotBlank()) " · ${plan.dose}" else ""
-        val body = if (attempt == 0) "$what。吃完点一下「已吃」，醒来就不用猜了。"
-        else "${Copy.hm(plan.hour, plan.minute)} 的提醒。吃过了就点「已吃」，还没吃现在吃也行。"
+        val title = if (attempt == 0) "该吃药了" else "还没打卡"
+        val body = "${Copy.hm(plan.hour, plan.minute)} · ${plan.name}" + if (plan.dose.isNotBlank()) " · ${plan.dose}" else ""
         val taken = broadcast(context, ACTION_TAKEN, plan.uid, 3) { putExtra(EXTRA_DATE, date) }
         val snooze = broadcast(context, ACTION_SNOOZE, plan.uid, 2) {
             putExtra(EXTRA_DATE, date)
@@ -151,14 +141,13 @@ object Reminders {
             .setColor(0xFF4F8A76.toInt())
             .setContentTitle(title)
             .setContentText(body)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setContentIntent(openApp(context, 8))
             .setAutoCancel(true)
             .addAction(0, "已吃", taken)
-            .addAction(0, "10 分钟后再提醒", snooze)
+            .addAction(0, "10 分钟后提醒", snooze)
             .build()
         NotificationManagerCompat.from(context).notify(notificationId(plan.uid), n)
     }
@@ -169,8 +158,8 @@ object Reminders {
         val n = NotificationCompat.Builder(context, CHANNEL_DONE)
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(0xFF4F8A76.toInt())
-            .setContentTitle("记下了，${Copy.hm(takenAt)} 吃的")
-            .setContentText("${plan.name}。醒来打开看看就知道。")
+            .setContentTitle("已打卡 ${Copy.hm(takenAt)}")
+            .setContentText(plan.name)
             .setTimeoutAfter(6_000)
             .setSilent(true)
             .setAutoCancel(true)
@@ -204,10 +193,6 @@ class ReminderReceiver : BroadcastReceiver() {
         val repo = app.repository
         val planUid = intent.getStringExtra(Reminders.EXTRA_PLAN) ?: return
         when (intent.action) {
-            Reminders.ACTION_MIDNIGHT -> {
-                app.refreshWidgets()
-                Reminders.rescheduleAll(app, repo.allPlansForAlarms())
-            }
             Reminders.ACTION_FIRE -> {
                 val plan = repo.plan(planUid) ?: return
                 val attempt = intent.getIntExtra(Reminders.EXTRA_ATTEMPT, 0)
@@ -221,7 +206,6 @@ class ReminderReceiver : BroadcastReceiver() {
                 if (plan.renag && attempt < Reminders.MAX_RENAG) {
                     Reminders.scheduleRenag(app, plan.uid, date, attempt + 1, plan.renagMinutes.coerceIn(5, 60))
                 }
-                app.refreshWidgets()
             }
             Reminders.ACTION_TAKEN -> {
                 val plan = repo.plan(planUid) ?: return
@@ -248,7 +232,6 @@ class BootReceiver : BroadcastReceiver() {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             try {
                 Reminders.rescheduleAll(app, app.repository.allPlansForAlarms())
-                app.refreshWidgets()
             } finally {
                 pending.finish()
             }

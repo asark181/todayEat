@@ -8,7 +8,6 @@ import com.todayeat.app.photo.PhotoStore
 import com.todayeat.app.sync.SyncApi
 import com.todayeat.app.sync.SyncManager
 import com.todayeat.app.update.AppUpdate
-import com.todayeat.app.widget.TodayWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -36,7 +35,6 @@ class TodayEatApp : Application() {
         sync.schedulePeriodic()
         mainScope.launch(Dispatchers.IO) {
             Reminders.rescheduleAll(this@TodayEatApp, repository.allPlansForAlarms())
-            refreshWidgets()
         }
     }
 
@@ -49,10 +47,7 @@ class TodayEatApp : Application() {
                 Reminders.cancelRenag(this@TodayEatApp, it.planUid)
                 Reminders.cancelShown(this@TodayEatApp, it.planUid)
             }
-            refreshWidgets()
         }
         if (!fromSync) sync.request()
     }
-
-    suspend fun refreshWidgets() = TodayWidget.refresh(this)
 }

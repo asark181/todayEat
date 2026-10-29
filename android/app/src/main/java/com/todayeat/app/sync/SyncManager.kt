@@ -63,7 +63,7 @@ class SyncManager(
     /** 注册或登录；成功后立刻同步一次。失败抛出带中文信息的异常 */
     suspend fun signIn(username: String, password: String, register: Boolean) = withContext(Dispatchers.IO) {
         val name = username.trim()
-        require(name.length in 2..32) { "用户名要 2 到 32 个字" }
+        require(name.length in 2..32) { "用户名需 2–32 个字符" }
         require(password.length >= 6) { "密码至少 6 位" }
         val derived = Crypto.derive(name, password)
         val (tok, serverName) = try {
@@ -71,7 +71,7 @@ class SyncManager(
         } catch (e: ApiException) {
             throw IllegalStateException(e.detail)
         } catch (e: IOException) {
-            throw IllegalStateException("连不上服务器，检查一下网络")
+            throw IllegalStateException("无法连接服务器")
         }
         KeyVault.save(context, derived.key)
         prefs.edit().putString(KEY_TOKEN, tok).putString(KEY_USER, serverName).putBoolean(KEY_FIRST, true).apply()
@@ -137,11 +137,11 @@ class SyncManager(
                 }
                 true
             } catch (e: AEADBadTagException) {
-                _state.value = SyncState.Failed("云端数据解不开，可能不是用这个密码加密的")
+                _state.value = SyncState.Failed("无法解密云端数据，请确认密码")
                 true
             } catch (e: IOException) {
                 Log.w(TAG, "sync network", e)
-                _state.value = SyncState.Failed("网络不太好，稍后会自动再试")
+                _state.value = SyncState.Failed("网络异常，稍后自动重试")
                 false
             }
         }

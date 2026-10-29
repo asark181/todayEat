@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">吃了吗</string>
-    <string name="widget_description">醒来不用打开 App，看一眼就知道今天吃没吃</string>
 </resources>

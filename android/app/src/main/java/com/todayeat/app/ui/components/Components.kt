@@ -34,6 +34,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -168,22 +174,23 @@ fun Row2(
     Row(
         modifier
             .fillMaxWidth()
+            .heightIn(min = 56.dp)
             .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
-            .padding(horizontal = 20.dp, vertical = 15.dp),
+            .padding(horizontal = 18.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(Modifier.weight(1f)) {
             Text(title, style = T.body, color = T.c.ink)
             if (sub != null) Text(sub, style = T.tiny, color = T.c.ink3, modifier = Modifier.padding(top = 2.dp))
         }
-        if (value != null) Text(value, style = T.small, color = valueColor, modifier = Modifier.padding(start = 12.dp, end = 6.dp))
+        if (value != null) Text(value, style = T.body.merge(T.digits), color = valueColor, modifier = Modifier.padding(start = 12.dp, end = 6.dp))
         trailing()
     }
 }
 
 @Composable
 fun Divider(modifier: Modifier = Modifier) {
-    Box(modifier.fillMaxWidth().padding(horizontal = 20.dp).height(1.dp).background(T.c.line))
+    Box(modifier.fillMaxWidth().padding(start = 18.dp).height(1.dp).background(T.c.line))
 }
 
 @Composable
@@ -204,10 +211,12 @@ fun Field(
     onChange: (String) -> Unit,
     placeholder: String,
     modifier: Modifier = Modifier,
+    label: String? = null,
     password: Boolean = false,
     keyboard: KeyboardType = KeyboardType.Text
 ) {
     val c = T.c
+    if (label != null) FieldLabel(label)
     Box(
         modifier
             .fillMaxWidth()
@@ -229,7 +238,7 @@ fun Field(
     }
 }
 
-enum class GlyphKind { Check, Camera, Plus, Chevron, Close, Back, Cloud }
+enum class GlyphKind { Check, Camera, Plus, Chevron, Close, Back, Cloud, Image }
 
 /** 自绘的几个线条小图标，粗细统一 */
 @Composable
@@ -262,6 +271,15 @@ fun Glyph(kind: GlyphKind, color: Color, size: Dp = 20.dp, modifier: Modifier = 
                 drawLine(color, Offset(w * 0.42f, w * 0.18f), Offset(w * 0.58f, w * 0.18f), st.width, StrokeCap.Round)
                 drawLine(color, Offset(w * 0.58f, w * 0.18f), Offset(w * 0.64f, w * 0.3f), st.width, StrokeCap.Round)
                 drawCircle(color, w * 0.14f, Offset(w * 0.5f, w * 0.56f), style = st)
+            }
+            GlyphKind.Image -> {
+                drawRoundRect(color, Offset(w * 0.14f, w * 0.2f), androidx.compose.ui.geometry.Size(w * 0.72f, w * 0.6f),
+                    androidx.compose.ui.geometry.CornerRadius(w * 0.1f), style = st)
+                drawPath(Path().apply {
+                    moveTo(w * 0.22f, w * 0.7f); lineTo(w * 0.42f, w * 0.48f); lineTo(w * 0.56f, w * 0.62f)
+                    lineTo(w * 0.66f, w * 0.52f); lineTo(w * 0.8f, w * 0.68f)
+                }, color, style = st)
+                drawCircle(color, w * 0.06f, Offset(w * 0.64f, w * 0.34f))
             }
             GlyphKind.Cloud -> drawPath(Path().apply {
                 moveTo(w * 0.28f, w * 0.74f)
@@ -438,4 +456,105 @@ fun SectionLabel(text: String, modifier: Modifier = Modifier) {
 @Composable
 fun TextLink(text: String, color: Color = T.c.sage, style: TextStyle = T.small, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Text(text, style = style, color = color, modifier = modifier.clip(RoundedCornerShape(8.dp)).clickable(onClick = onClick).padding(horizontal = 6.dp, vertical = 6.dp))
+}
+
+@Composable
+fun FieldLabel(text: String, modifier: Modifier = Modifier) {
+    Text(text, style = T.small, color = T.c.ink2, modifier = modifier.padding(start = 4.dp, bottom = 8.dp))
+}
+
+/** 面板顶部：标题 + 关闭 */
+@Composable
+fun SheetHeader(title: String, onClose: () -> Unit) {
+    Row(Modifier.fillMaxWidth().padding(bottom = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(title, style = T.title, color = T.c.ink, modifier = Modifier.weight(1f))
+        Box(
+            Modifier.size(36.dp).clip(CircleShape).background(T.c.paper).clickable(onClick = onClose),
+            contentAlignment = Alignment.Center
+        ) { Glyph(GlyphKind.Close, T.c.ink2, 18.dp) }
+    }
+}
+
+/** 分段切换 */
+@Composable
+fun Segmented(options: List<String>, selected: Int, modifier: Modifier = Modifier, onSelect: (Int) -> Unit) {
+    val c = T.c
+    Row(modifier.clip(RoundedCornerShape(14.dp)).background(c.line).padding(3.dp)) {
+        options.forEachIndexed { i, label ->
+            val on = i == selected
+            Box(
+                Modifier
+                    .weight(1f, fill = false)
+                    .clip(RoundedCornerShape(11.dp))
+                    .background(if (on) c.card else Color.Transparent)
+                    .clickable(remember { MutableInteractionSource() }, null) { onSelect(i) }
+                    .padding(horizontal = 18.dp, vertical = 7.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(label, style = if (on) T.bodyStrong else T.body, color = if (on) c.ink else c.ink2)
+            }
+        }
+    }
+}
+
+/** 滚轮：循环滚动，停下来时回调选中的值 */
+@Composable
+fun Wheel(count: Int, value: Int, label: (Int) -> String, modifier: Modifier = Modifier, onChange: (Int) -> Unit) {
+    val c = T.c
+    val itemH = 44.dp
+    val loops = 200
+    val state = rememberLazyListState(initialFirstVisibleItemIndex = count * (loops / 2) + value - 2)
+    val fling = rememberSnapFlingBehavior(state)
+    val itemPx = with(androidx.compose.ui.platform.LocalDensity.current) { itemH.toPx() }
+    val center by remember {
+        derivedStateOf { state.firstVisibleItemIndex + 2 + if (state.firstVisibleItemScrollOffset > itemPx / 2) 1 else 0 }
+    }
+    val latest by rememberUpdatedState(onChange)
+    LaunchedEffect(state) {
+        snapshotFlow { state.isScrollInProgress to center }.collect { (moving, i) -> if (!moving) latest(i % count) }
+    }
+    Box(modifier.height(itemH * 5), contentAlignment = Alignment.Center) {
+        LazyColumn(state = state, flingBehavior = fling, modifier = Modifier.fillMaxSize()) {
+            items(count * loops) { i ->
+                val on = i == center
+                Box(Modifier.fillMaxWidth().height(itemH), contentAlignment = Alignment.Center) {
+                    Text(
+                        label(i % count),
+                        style = (if (on) T.title else T.body).merge(T.digits),
+                        color = if (on) c.ink else c.ink3
+                    )
+                }
+            }
+        }
+    }
+}
+
+/** 时、分两个滚轮 */
+@Composable
+fun WheelTimePicker(hour: Int, minute: Int, modifier: Modifier = Modifier, onChange: (Int, Int) -> Unit) {
+    val c = T.c
+    val h by rememberUpdatedState(hour)
+    val m by rememberUpdatedState(minute)
+    Box(modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(c.paper), contentAlignment = Alignment.Center) {
+        Box(Modifier.fillMaxWidth().padding(horizontal = 12.dp).height(44.dp).clip(RoundedCornerShape(12.dp)).background(c.card))
+        Row(Modifier.width(200.dp), verticalAlignment = Alignment.CenterVertically) {
+            Wheel(24, hour, { "%02d".format(it) }, Modifier.weight(1f)) { onChange(it, m) }
+            Text(":", style = T.title, color = c.ink)
+            Wheel(60, minute, { "%02d".format(it) }, Modifier.weight(1f)) { onChange(h, it) }
+        }
+    }
+}
+
+/** 确认框，用于删除这类不能撤回的操作 */
+@Composable
+fun ConfirmDialog(title: String, text: String?, confirm: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    val c = T.c
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = c.card,
+        title = { Text(title, style = T.title, color = c.ink) },
+        text = text?.let { { Text(it, style = T.body, color = c.ink2) } },
+        confirmButton = { TextLink(confirm, color = c.clay, style = T.bodyStrong) { onConfirm() } },
+        dismissButton = { TextLink("取消", color = c.ink2, style = T.bodyStrong) { onDismiss() } }
+    )
 }

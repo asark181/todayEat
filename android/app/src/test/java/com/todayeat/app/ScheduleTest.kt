@@ -63,17 +63,4 @@ class ScheduleTest {
         val info = Days.info(thu.minusDays(1), listOf(a, b), listOf(dose("2026-10-28", plan = "a")), thu.atTime(7, 0))
         assertEquals(DayState.PARTIAL, info.state)
     }
-
-    @Test fun streakSkipsDaysOff() {
-        val p = plan(Repeat.WEEKDAYS)
-        // 周一到周四都吃了，周末本来不用吃
-        val doses = listOf("2026-10-23", "2026-10-26", "2026-10-27", "2026-10-28", "2026-10-29").map { dose(it) }
-        assertEquals(5, Days.streak(listOf(p), doses, thu.atTime(8, 0), LocalDate.of(2026, 10, 23)))
-    }
-
-    @Test fun streakNotBrokenByTodayNotYetTaken() {
-        val p = plan()
-        val doses = listOf("2026-10-27", "2026-10-28").map { dose(it) }
-        assertEquals(2, Days.streak(listOf(p), doses, thu.atTime(5, 0), LocalDate.of(2026, 10, 27)))
-    }
 }

@@ -35,7 +35,7 @@ data class Palette(
 
 val LightPalette = Palette(
     paper = Color(0xFFF6F3EE), card = Color(0xFFFFFFFF),
-    ink = Color(0xFF2B2722), ink2 = Color(0xFF6E665C), ink3 = Color(0xFFA39A8E), line = Color(0xFFE9E3DA),
+    ink = Color(0xFF2B2722), ink2 = Color(0xFF6E665C), ink3 = Color(0xFF8E867B), line = Color(0xFFE9E3DA),
     sage = Color(0xFF4F8A76), sageSoft = Color(0xFFE3EFE9),
     amber = Color(0xFFD9A24A), amberSoft = Color(0xFFF8EDD6),
     clay = Color(0xFFC9785D), claySoft = Color(0xFFF6E3DB),
@@ -44,7 +44,7 @@ val LightPalette = Palette(
 
 val DarkPalette = Palette(
     paper = Color(0xFF171512), card = Color(0xFF211F1B),
-    ink = Color(0xFFEDE7DD), ink2 = Color(0xFFB3AA9D), ink3 = Color(0xFF7D756A), line = Color(0xFF34302A),
+    ink = Color(0xFFEDE7DD), ink2 = Color(0xFFB3AA9D), ink3 = Color(0xFF8A8276), line = Color(0xFF34302A),
     sage = Color(0xFF7DB8A2), sageSoft = Color(0xFF22332C),
     amber = Color(0xFFE2B66A), amberSoft = Color(0xFF3A3020),
     clay = Color(0xFFD9927A), claySoft = Color(0xFF3A2620),
@@ -56,12 +56,12 @@ val LocalPalette = staticCompositionLocalOf { LightPalette }
 object T {
     val c: Palette @Composable get() = LocalPalette.current
 
-    val display = TextStyle(fontSize = 30.sp, lineHeight = 38.sp, fontWeight = FontWeight.SemiBold, letterSpacing = 0.5.sp)
+    val display = TextStyle(fontSize = 28.sp, lineHeight = 36.sp, fontWeight = FontWeight.SemiBold)
     val title = TextStyle(fontSize = 20.sp, lineHeight = 28.sp, fontWeight = FontWeight.SemiBold)
     val body = TextStyle(fontSize = 16.sp, lineHeight = 24.sp)
     val bodyStrong = TextStyle(fontSize = 16.sp, lineHeight = 24.sp, fontWeight = FontWeight.Medium)
     val small = TextStyle(fontSize = 14.sp, lineHeight = 20.sp)
-    val tiny = TextStyle(fontSize = 12.sp, lineHeight = 16.sp)
+    val tiny = TextStyle(fontSize = 13.sp, lineHeight = 18.sp)
     /** 等宽数字，时间对齐 */
     val digits = TextStyle(fontFeatureSettings = "tnum")
 }

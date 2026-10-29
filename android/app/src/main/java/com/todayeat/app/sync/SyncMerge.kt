@@ -2,7 +2,6 @@ package com.todayeat.app.sync
 
 import com.todayeat.app.data.DoseEntity
 import com.todayeat.app.data.PlanEntity
-import com.todayeat.app.data.Repository
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -24,7 +23,7 @@ object SyncMerge {
     fun merge(local: Snapshot, remote: Snapshot?, now: Long): MergeResult {
         val r = remote ?: Snapshot(emptyList(), emptyList())
         val plans = pickNewer(local.plans, r.plans, { it.uid }, { it.updatedAt })
-        val doses = dedupeSameDay(pickNewer(local.doses, r.doses, { it.uid }, { it.updatedAt }), now)
+        val doses = pickNewer(local.doses, r.doses, { it.uid }, { it.updatedAt })
 
         val localPlans = local.plans.associateBy { it.uid }
         val localDoses = local.doses.associateBy { it.uid }
@@ -46,22 +45,6 @@ object SyncMerge {
             if (cur == null || time(x) > time(cur)) out[id(x)] = x
         }
         return out.values.toList()
-    }
-
-    /** 两台设备同一天各点了一次「已吃」：保留早的那条，照片并过去，另一条删掉 */
-    private fun dedupeSameDay(doses: List<DoseEntity>, now: Long): List<DoseEntity> {
-        val live = doses.filter { !it.deleted }.groupBy { it.planUid to it.date }
-        val replaced = HashMap<String, DoseEntity>()
-        for ((_, group) in live) {
-            if (group.size < 2) continue
-            val sorted = group.sortedWith(compareBy({ it.takenAt }, { it.uid }))
-            val keep = sorted.first()
-            val photos = sorted.flatMap { it.photoIds }.distinct().take(Repository.MAX_PHOTOS)
-            val notes = sorted.map { it.note }.filter { it.isNotBlank() }.distinct().joinToString("\n")
-            replaced[keep.uid] = keep.copy(photos = photos.joinToString(","), note = notes, updatedAt = maxOf(now, keep.updatedAt + 1))
-            sorted.drop(1).forEach { replaced[it.uid] = it.copy(deleted = true, updatedAt = maxOf(now, it.updatedAt + 1)) }
-        }
-        return doses.map { replaced[it.uid] ?: it }
     }
 
     fun toJson(s: Snapshot): String {

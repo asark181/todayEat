@@ -31,14 +31,11 @@ class SyncMergeTest {
         assertFalse(r.remoteOutdated)
     }
 
-    @Test fun twoDevicesSameDayKeepEarlierAndMergePhotos() {
+    @Test fun sameDayRecordsFromTwoDevicesAreBothKept() {
         val local = Snapshot(listOf(plan), listOf(dose("a", 100, photos = "x")))
         val remote = Snapshot(listOf(plan), listOf(dose("b", 90, photos = "y")))
         val r = SyncMerge.merge(local, remote, 1000)
-        val live = r.merged.doses.filter { !it.deleted }
-        assertEquals(1, live.size)
-        assertEquals("b", live.single().uid)
-        assertEquals(listOf("y", "x"), live.single().photoIds)
+        assertEquals(setOf("a", "b"), r.merged.doses.filter { !it.deleted }.map { it.uid }.toSet())
         assertTrue(r.remoteOutdated)
         // 再合并一次应当稳定
         val again = SyncMerge.merge(r.merged, r.merged, 2000)

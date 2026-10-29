@@ -9,43 +9,23 @@ import com.todayeat.app.TodayEatApp
 import com.todayeat.app.data.DoseEntity
 import com.todayeat.app.data.PlanEntity
 import com.todayeat.app.data.newId
-import com.todayeat.app.domain.Copy
 import com.todayeat.app.domain.DayInfo
 import com.todayeat.app.domain.Days
-import com.todayeat.app.domain.Schedule
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.YearMonth
 import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 
-data class HomeUi(
-    val now: LocalDateTime,
-    val today: DayInfo,
-    val headline: Copy.Headline,
-    val streak: Int,
-    /** 开始吃药的第几天；没设开始日期为 null */
-    val courseDay: Long?,
-    val ready: Boolean
-)
-
-@OptIn(ExperimentalCoroutinesApi::class)
 class AppViewModel(application: Application) : AndroidViewModel(application) {
     val app = application as TodayEatApp
     private val repo = app.repository
@@ -57,35 +37,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val _onboarded = MutableStateFlow(prefs.getBoolean(KEY_ONBOARDED, false))
     val onboarded: StateFlow<Boolean> = _onboarded.asStateFlow()
 
-    private val _courseStart = MutableStateFlow(prefs.getString(KEY_COURSE, null)?.let { runCatching { LocalDate.parse(it) }.getOrNull() })
-    val courseStart: StateFlow<LocalDate?> = _courseStart.asStateFlow()
+    /** 正在用的药；数据库第一次读出来之前是 null */
+    private val plansOrNull: StateFlow<List<PlanEntity>?> = repo.observePlans().stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    val plans: StateFlow<List<PlanEntity>> = plansOrNull.map { it.orEmpty() }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    val ready: StateFlow<Boolean> = plansOrNull.map { it != null }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    val plans: StateFlow<List<PlanEntity>> = repo.observePlans().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
-
-    private val today = _now.map { it.toLocalDate() }.distinctUntilChanged()
-
-    private val recent: Flow<List<DoseEntity>> = today.flatMapLatest { repo.observeDoses(it.minusDays(800), it.plusDays(1)) }
-
-    private val firstDate = repo.observeFirstDoseDate().map { s -> s?.let { runCatching { LocalDate.parse(it) }.getOrNull() } }
-
-    private var loaded = false
-
-    val home: StateFlow<HomeUi> = combine(_now, plans, recent, firstDate, _courseStart) { now, plans, doses, first, course ->
-        val info = Days.info(now.toLocalDate(), plans, doses, now)
-        loaded = true
-        HomeUi(
-            now = now,
-            today = info,
-            headline = Copy.headline(info, now),
-            streak = Days.streak(plans, doses, now, first),
-            courseDay = course?.let { ChronoUnit.DAYS.between(it, now.toLocalDate()) + 1 }?.takeIf { it > 0 },
-            ready = true
-        )
-    }.flowOn(Dispatchers.Default).stateIn(
-        viewModelScope, SharingStarted.Eagerly,
-        HomeUi(LocalDateTime.now(), DayInfo(LocalDate.now(), com.todayeat.app.domain.DayState.NONE, emptyList(), emptyList()),
-            Copy.Headline("", ""), 0, null, false)
-    )
+    /** 含已删除的药，用来给老记录显示药名 */
+    val allPlans: StateFlow<Map<String, PlanEntity>> = repo.observeAllPlans().map { list -> list.associateBy { it.uid } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
 
     init {
         viewModelScope.launch {
@@ -100,52 +59,47 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         _now.value = LocalDateTime.now()
     }
 
-    fun monthDoses(month: YearMonth): Flow<List<DoseEntity>> = repo.observeDoses(month.atDay(1), month.atEndOfMonth())
+    fun doses(from: LocalDate, to: LocalDate): Flow<List<DoseEntity>> = repo.observeDoses(from, to)
 
     fun dayInfo(date: LocalDate, doses: List<DoseEntity>): DayInfo = Days.info(date, plans.value, doses, _now.value)
 
-    // ───────── 打卡 ─────────
+    // ───────── 记录 ─────────
 
-    fun take(planUid: String, date: LocalDate = _now.value.toLocalDate(), at: Long = System.currentTimeMillis()) {
-        viewModelScope.launch { repo.markTaken(planUid, date, at) }
-    }
-
-    fun takeAll(plans: List<PlanEntity>, date: LocalDate) {
+    /** 大按钮：这天该吃还没记的全部记上。今天记现在的时间，过去的日子按提醒时间补记 */
+    fun checkIn(info: DayInfo) {
+        val left = info.due.filter { info.doseFor(it.uid) == null }
+        val today = _now.value.toLocalDate()
         viewModelScope.launch {
-            val at = System.currentTimeMillis()
-            plans.forEach { repo.markTaken(it.uid, date, at) }
+            val now = System.currentTimeMillis()
+            left.forEach { p ->
+                val at = if (info.date == today) now else epoch(info.date, p.hour, p.minute)
+                repo.markTaken(p.uid, info.date, at)
+            }
         }
     }
 
-    fun undo(doseUid: String) = viewModelScope.launch { repo.undo(doseUid) }
-
-    fun setTime(dose: DoseEntity, hour: Int, minute: Int) = viewModelScope.launch {
-        val at = LocalDate.parse(dose.date).atTime(hour, minute).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        repo.setTakenAt(dose.uid, at)
+    /** 新记录的默认值：这天还没记的第一种药；今天用现在的时间，别的日子用提醒时间 */
+    fun newDose(date: LocalDate, info: DayInfo?): DoseEntity {
+        val plan = info?.due?.firstOrNull { info.doseFor(it.uid) == null } ?: info?.due?.firstOrNull() ?: plans.value.firstOrNull()
+        val at = when {
+            date == LocalDate.now() -> System.currentTimeMillis()
+            plan != null -> epoch(date, plan.hour, plan.minute)
+            else -> epoch(date, 8, 0)
+        }
+        return DoseEntity(uid = newId(), planUid = plan?.uid ?: "", date = date.toString(), takenAt = at, updatedAt = 0)
     }
 
-    /** 补记过去某天：时间按计划的提醒时间算 */
-    fun backfill(plan: PlanEntity, date: LocalDate) = viewModelScope.launch {
-        val at = date.atTime(Schedule.timeOf(plan)).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        repo.markTaken(plan.uid, date, at)
-    }
+    fun saveDose(dose: DoseEntity) = viewModelScope.launch { repo.saveDose(dose) }
 
-    fun setNote(doseUid: String, note: String) = viewModelScope.launch { repo.setNote(doseUid, note) }
+    fun deleteDose(uid: String) = viewModelScope.launch { repo.deleteDose(uid) }
 
-    /** 给某次记录加照片；还没记的话先记上 */
-    suspend fun attachPhoto(planUid: String, date: LocalDate, uri: Uri): Boolean {
-        val id = withContext(Dispatchers.IO) { app.photos.import(uri) } ?: return false
-        val dose = repo.doseOn(planUid, date) ?: repo.markTaken(planUid, date)
-        repo.addPhoto(dose.uid, id)
-        return true
-    }
+    /** 导入一张照片，返回照片 id；读不出来返回 null */
+    suspend fun importPhoto(uri: Uri): String? = withContext(Dispatchers.IO) { app.photos.import(uri) }
 
-    fun removePhoto(doseUid: String, photoId: String) = viewModelScope.launch { repo.removePhoto(doseUid, photoId) }
-
-    // ───────── 计划 ─────────
+    // ───────── 药 ─────────
 
     fun newPlan(): PlanEntity = PlanEntity(
-        uid = newId(), name = if (plans.value.isEmpty()) "早上的药" else "", startDate = LocalDate.now().toString(),
+        uid = newId(), name = "", startDate = LocalDate.now().toString(),
         sortOrder = plans.value.size, updatedAt = System.currentTimeMillis()
     )
 
@@ -156,24 +110,20 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun finishOnboarding(plan: PlanEntity) {
         viewModelScope.launch {
             repo.savePlan(plan)
-            prefs.edit().putBoolean(KEY_ONBOARDED, true).apply()
-            _onboarded.value = true
+            markOnboarded()
         }
     }
 
-    /** 登录后云端已有计划时直接跳过引导 */
+    /** 登录后云端已有药时直接跳过引导 */
     fun markOnboarded() {
         prefs.edit().putBoolean(KEY_ONBOARDED, true).apply()
         _onboarded.value = true
     }
 
-    fun setCourseStart(date: LocalDate?) {
-        prefs.edit().apply { if (date == null) remove(KEY_COURSE) else putString(KEY_COURSE, date.toString()) }.apply()
-        _courseStart.value = date
-    }
-
     companion object {
         private const val KEY_ONBOARDED = "onboarded"
-        private const val KEY_COURSE = "course_start"
+
+        fun epoch(date: LocalDate, hour: Int, minute: Int): Long =
+            date.atTime(hour, minute).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
     }
 }

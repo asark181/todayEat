@@ -21,7 +21,8 @@ class Repository(
 
     fun observePlans(): Flow<List<PlanEntity>> = plans.observeActive()
     fun observeDoses(from: LocalDate, to: LocalDate): Flow<List<DoseEntity>> = doses.observeRange(from.toString(), to.toString())
-    fun observeFirstDoseDate(): Flow<String?> = doses.observeFirstDate()
+    /** 含已删除的药：老记录还要显示药名 */
+    fun observeAllPlans(): Flow<List<PlanEntity>> = plans.observeAll()
 
     suspend fun activePlans(): List<PlanEntity> = plans.active()
     suspend fun plan(uid: String): PlanEntity? = plans.byUid(uid)
@@ -61,7 +62,7 @@ class Repository(
         onChanged(true, false)
     }
 
-    /** 记「吃过了」；同一天已经记过就原样返回，不重复记 */
+    /** 打卡和通知上的「已吃」：这种药这天已经有记录就原样返回，不重复记 */
     suspend fun markTaken(planUid: String, date: LocalDate, takenAt: Long = clock()): DoseEntity {
         val made = db.withTransaction {
             doses.find(planUid, date.toString())?.let { return@withTransaction it to false }
@@ -73,19 +74,13 @@ class Repository(
         return made.first
     }
 
-    suspend fun undo(doseUid: String) = editDose(doseUid) { it.copy(deleted = true) }
-
-    suspend fun setTakenAt(doseUid: String, takenAt: Long) = editDose(doseUid) { it.copy(takenAt = takenAt) }
-
-    suspend fun setNote(doseUid: String, note: String) = editDose(doseUid) { it.copy(note = note.take(200)) }
-
-    suspend fun addPhoto(doseUid: String, photoId: String) = editDose(doseUid) {
-        it.copy(photos = (it.photoIds + photoId).distinct().takeLast(MAX_PHOTOS).joinToString(","))
+    /** 新增或修改一条记录（一天可以有多条） */
+    suspend fun saveDose(dose: DoseEntity) {
+        doses.upsert(dose.copy(note = dose.note.take(200), photos = dose.photoIds.take(MAX_PHOTOS).joinToString(","), updatedAt = clock()))
+        onChanged(false, false)
     }
 
-    suspend fun removePhoto(doseUid: String, photoId: String) = editDose(doseUid) {
-        it.copy(photos = (it.photoIds - photoId).joinToString(","))
-    }
+    suspend fun deleteDose(doseUid: String) = editDose(doseUid) { it.copy(deleted = true) }
 
     private suspend fun editDose(uid: String, change: (DoseEntity) -> DoseEntity) {
         val d = doses.byUid(uid) ?: return

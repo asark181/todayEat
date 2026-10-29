@@ -105,28 +105,4 @@ object Days {
         }
         return DayInfo(date, state, due, dayDoses)
     }
-
-    /**
-     * 连续没落下的天数：从今天（今天还没吃完就从昨天）往回数，不用吃的日子跳过，
-     * 遇到漏吃或部分就停。只看 [earliest] 之后，避免数到装 App 之前。
-     */
-    fun streak(plans: List<PlanEntity>, doses: List<DoseEntity>, now: LocalDateTime, earliest: LocalDate?): Int {
-        if (earliest == null) return 0
-        val today = now.toLocalDate()
-        var day = today
-        var count = 0
-        val todayInfo = info(today, plans, doses, now)
-        if (todayInfo.state == DayState.ALL && todayInfo.due.isNotEmpty()) count++
-        day = day.minusDays(1)
-        while (!day.isBefore(earliest)) {
-            val i = info(day, plans, doses, now)
-            when (i.state) {
-                DayState.ALL -> if (i.due.isNotEmpty()) count++
-                DayState.NONE -> Unit
-                else -> return count
-            }
-            day = day.minusDays(1)
-        }
-        return count
-    }
 }
