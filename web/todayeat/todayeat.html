@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>吃了吗 · 服药打卡</title>
+<meta name="description" content="吃了吗：每天早上到点提醒吃药，通知上按一下就记上，醒来一眼看到今天吃没吃。安卓安装包在本页下载。">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F6F3EE" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171512" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://leafy.fxxkopenai.com/todayeat.html">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IuWQg+S6huWQlyI+CiAgPHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIHJ4PSI0NiIgZmlsbD0iIzRGOEE3NiIvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgOCkiPgogICAgPHBhdGggZD0iTTI0LDEzNCBBNzYsNzYgMCAwIDEgMTc2LDEzNCBaIiBmaWxsPSIjRjhEREJGIiBmaWxsLW9wYWNpdHk9IjAuMTQiLz4KICAgIDxwYXRoIGQ9Ik00MiwxMzQgQTU4LDU4IDAgMCAxIDE1OCwxMzQgWiIgZmlsbD0iI0Y4RERCRiIvPgogICAgPHJlY3QgeD0iMzQiIHk9IjEzMyIgd2lkdGg9IjEzMiIgaGVpZ2h0PSIzIiByeD0iMS41IiBmaWxsPSIjRjhEREJGIiBmaWxsLW9wYWNpdHk9IjAuNSIvPgogICAgPGcgdHJhbnNmb3JtPSJyb3RhdGUoLTM4IDEwMCAxMTIpIj4KICAgICAgPHJlY3QgeD0iNDUiIHk9IjkyIiB3aWR0aD0iMTEwIiBoZWlnaHQ9IjQwIiByeD0iMjAiIGZpbGw9IiMxRTNCMzEiIGZpbGwtb3BhY2l0eT0iMC4yMiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMiA1KSIvPgogICAgICA8cGF0aCBkPSJNNjUsOTIgSDEwMCBWMTMyIEg2NSBBMjAsMjAgMCAwIDEgNjUsOTIgWiIgZmlsbD0iI0ZGRkZGRiIvPgogICAgICA8cGF0aCBkPSJNMTAwLDkyIEgxMzUgQTIwLDIwIDAgMCAxIDEzNSwxMzIgSDEwMCBaIiBmaWxsPSIjRUVGNUYxIi8+CiAgICAgIDxyZWN0IHg9Ijk5IiB5PSI5MiIgd2lkdGg9IjIiIGhlaWdodD0iNDAiIGZpbGw9IiM0RjhBNzYiIGZpbGwtb3BhY2l0eT0iMC4yMiIvPgogICAgICA8cGF0aCBkPSJNMTEwLDk5IEgxMzEgQTEyLDEyIDAgMCAxIDE0MCwxMDMiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0ZGRkZGRiIgc3Ryb2tlLXdpZHRoPSI0IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1vcGFjaXR5PSIwLjkiLz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPgo=">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F6F3EE;
+    --card: #FFFFFF;
+    --ink: #2B2722;
+    --ink2: #6E665C;
+    --ink3: #A39A8E;
+    --line: #E9E3DA;
+    --sage: #4F8A76;
+    --sage-on: #FFFFFF;
+    --sage-soft: #E3EFE9;
+    --amber: #D9A24A;
+    --amber-soft: #F8EDD6;
+    --clay: #C9785D;
+    --clay-soft: #F6E3DB;
+    --dawn: #F8DDBF;
+    --frame: #2B2722;
+    --shadow: 0 1px 2px rgba(43, 39, 34, .04), 0 10px 28px rgba(43, 39, 34, .07);
+    --shadow-lg: 0 24px 60px rgba(43, 39, 34, .16);
+    --serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+    --sans: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", "HarmonyOS Sans SC", "MiSans", "Microsoft YaHei", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #171512;
+      --card: #211F1B;
+      --ink: #EDE7DD;
+      --ink2: #B3AA9D;
+      --ink3: #7D756B;
+      --line: #34302A;
+      --sage: #7DB8A2;
+      --sage-on: #12201B;
+      --sage-soft: #23332D;
+      --amber: #E0B263;
+      --amber-soft: #3A3020;
+      --clay: #D98C72;
+      --clay-soft: #3B2822;
+      --dawn: #5A4632;
+      --frame: #3A362F;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 28px rgba(0, 0, 0, .25);
+      --shadow-lg: 0 24px 60px rgba(0, 0, 0, .5);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  svg { display: block; }
+  .num { font-variant-numeric: tabular-nums; }
+  .wrap { width: min(1040px, calc(100% - 32px)); margin: 0 auto; padding: 18px 0 48px; }
+
+  /* 顶栏 */
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--ink2); font-size: 14px; text-decoration: none;
+    padding: 6px 0;
+  }
+  .back:hover { color: var(--sage); }
+  .back svg { width: 16px; height: 16px; }
+  .top .site { color: var(--ink3); font-size: 13px; }
+
+  h1, h2, h3 { font-family: var(--serif); font-weight: 700; letter-spacing: .04em; }
+
+  /* 首屏 */
+  .hero { display: grid; gap: 36px; margin-top: 28px; align-items: center; }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand svg { width: 64px; height: 64px; border-radius: 16px; box-shadow: 0 6px 16px rgba(79, 138, 118, .22); }
+  h1 { margin: 0; font-size: 36px; line-height: 1.2; }
+  .brand p { margin: 2px 0 0; color: var(--ink3); font-size: 14px; }
+  .story { margin: 22px 0 0; font-size: 17px; color: var(--ink); max-width: 30em; }
+  .story + .story { margin-top: 10px; color: var(--ink2); font-size: 16px; }
+
+  .cta { margin-top: 26px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 52px; min-width: 200px;
+    padding: 12px 28px;
+    border-radius: 999px;
+    background: var(--sage); color: var(--sage-on);
+    font-size: 17px; font-weight: 500; letter-spacing: .06em;
+    text-decoration: none;
+    box-shadow: 0 10px 22px rgba(79, 138, 118, .28);
+  }
+  .btn svg { width: 18px; height: 18px; }
+  .btn:hover { filter: brightness(1.05); }
+  .btn:active { transform: translateY(1px); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--sage); outline-offset: 3px; border-radius: 6px; }
+  .meta { margin: 14px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; color: var(--ink3); font-size: 13px; }
+  .meta b { color: var(--ink2); font-weight: 500; }
+  .sha {
+    font: inherit; color: inherit;
+    background: none; border: 0; padding: 0; cursor: pointer;
+    border-bottom: 1px dashed var(--line);
+  }
+  .sha code { font-family: var(--mono); font-size: 12px; color: var(--ink2); }
+  .sha:hover code { color: var(--sage); }
+  .copied { color: var(--sage); }
+
+  /* 手机示意 */
+  .stage { display: flex; justify-content: center; }
+  .phone {
+    width: 280px;
+    padding: 10px;
+    border-radius: 42px;
+    background: var(--frame);
+    box-shadow: var(--shadow-lg);
+  }
+  .screen {
+    border-radius: 33px;
+    background: var(--paper);
+    padding: 12px 16px 18px;
+    overflow: hidden;
+  }
+  .status { display: flex; justify-content: space-between; color: var(--ink); font-size: 11px; font-weight: 500; padding: 0 6px; }
+  .status i { display: inline-block; width: 18px; height: 8px; border: 1px solid var(--ink2); border-radius: 2px; position: relative; top: 1px; }
+  .status i::after { content: ""; position: absolute; inset: 1px 4px 1px 1px; background: var(--ink2); border-radius: 1px; }
+  .date { margin: 14px 2px 8px; color: var(--ink2); font-size: 12px; }
+  .today {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 18px 16px 16px;
+    box-shadow: 0 1px 2px rgba(43, 39, 34, .05);
+  }
+  .tick {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--sage-soft); color: var(--sage);
+    display: grid; place-items: center;
+  }
+  .tick svg { width: 18px; height: 18px; }
+  .today .big { margin: 12px 0 0; font-size: 22px; font-weight: 700; line-height: 1.3; letter-spacing: .02em; }
+  .today .sub { margin: 4px 0 0; color: var(--sage); font-size: 14px; font-weight: 500; }
+  .pill {
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid var(--line);
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; color: var(--ink2);
+  }
+  .thumb {
+    flex: none; width: 34px; height: 34px; border-radius: 8px;
+    background:
+      radial-gradient(circle at 30% 35%, #fff 0 4px, transparent 5px),
+      radial-gradient(circle at 62% 35%, #fff 0 4px, transparent 5px),
+      radial-gradient(circle at 30% 68%, #fff 0 4px, transparent 5px),
+      radial-gradient(circle at 62% 68%, var(--line) 0 4px, transparent 5px),
+      #C9D6CF;
+  }
+  .pill b { display: block; color: var(--ink); font-weight: 500; font-size: 13px; }
+  .streak { margin: 10px 2px 0; color: var(--ink3); font-size: 11.5px; }
+
+  .cal { margin-top: 12px; background: var(--card); border-radius: 18px; padding: 12px 12px 10px; }
+  .cal-h { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; font-weight: 500; margin: 0 2px 8px; }
+  .cal-h span { color: var(--ink3); font-weight: 400; font-size: 11px; }
+  .grid7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .grid7 .w { text-align: center; color: var(--ink3); font-size: 9.5px; line-height: 16px; }
+  .d {
+    aspect-ratio: 1;
+    border-radius: 7px;
+    display: grid; place-items: center;
+    font-size: 10px; line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink3);
+  }
+  .d.t { background: var(--sage-soft); color: var(--sage); }
+  .d.p { background: var(--amber-soft); color: var(--amber); }
+  .d.m { background: var(--clay-soft); color: var(--clay); }
+  .d.f { color: var(--ink3); background: transparent; border: 1px dashed var(--line); }
+  .d.now { background: var(--sage); color: var(--sage-on); font-weight: 700; }
+
+  /* 区块 */
+  section.block { margin-top: 72px; }
+  .eyebrow { margin: 0; color: var(--sage); font-size: 13px; letter-spacing: .12em; }
+  h2 { margin: 4px 0 0; font-size: 26px; line-height: 1.35; }
+  .lede { margin: 10px 0 0; color: var(--ink2); max-width: 36em; }
+
+  .features { margin-top: 26px; display: grid; gap: 14px; }
+  .feat {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 20px 20px 18px;
+    box-shadow: var(--shadow);
+  }
+  .feat h3 { margin: 0; font-size: 18px; line-height: 1.4; }
+  .feat p { margin: 8px 0 0; color: var(--ink2); font-size: 15px; }
+  .feat .demo { margin-top: 16px; }
+
+  /* 通知示意 */
+  .noti {
+    background: var(--paper);
+    border-radius: 16px;
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+  .noti .app { display: flex; align-items: center; gap: 6px; color: var(--ink3); font-size: 11.5px; }
+  .noti .app svg { width: 14px; height: 14px; border-radius: 4px; }
+  .noti b { display: block; margin-top: 4px; font-weight: 500; color: var(--ink); }
+  .noti span { color: var(--ink2); }
+  .noti .acts { margin-top: 8px; display: flex; gap: 18px; font-weight: 500; color: var(--sage); font-size: 13px; }
+
+  /* 小组件示意 */
+  .widget {
+    width: 132px; height: 132px;
+    border-radius: 24px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    padding: 14px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .widget small { color: var(--ink3); font-size: 12px; }
+  .widget strong { display: block; color: var(--sage); font-size: 26px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .widget span { color: var(--ink2); font-size: 13px; }
+  .widgets { display: flex; gap: 12px; flex-wrap: wrap; }
+  .widget.no strong { color: var(--clay); font-size: 20px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--ink2); }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 4px; margin-right: 6px; vertical-align: -1px; }
+
+  /* 加密说明 */
+  .lock {
+    margin-top: 26px;
+    display: grid; gap: 18px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px 20px;
+    box-shadow: var(--shadow);
+  }
+  .lock h3 { margin: 0; font-size: 17px; }
+  .lock p { margin: 6px 0 0; color: var(--ink2); font-size: 15px; }
+  .warn { border-left: 3px solid var(--clay); padding-left: 14px; }
+  .warn h3 { color: var(--clay); }
+
+  /* 安装 */
+  .steps { margin: 22px 0 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 16px; max-width: 44em; }
+  .steps li { counter-increment: s; position: relative; padding-left: 36px; font-size: 15px; }
+  .steps li::before {
+    content: counter(s);
+    position: absolute; left: 0; top: 1px;
+    width: 24px; height: 24px; display: grid; place-items: center;
+    border-radius: 50%; border: 1px solid var(--line); background: var(--card);
+    color: var(--ink2); font-size: 13px; line-height: 1;
+  }
+  .path { display: block; margin-top: 3px; color: var(--ink3); font-size: 13px; }
+
+  footer {
+    margin-top: 64px; padding-top: 18px;
+    border-top: 1px solid var(--line);
+    color: var(--ink3); font-size: 13px; line-height: 1.9;
+  }
+  footer a { color: var(--ink2); }
+
+  @media (min-width: 820px) {
+    .wrap { padding-top: 28px; }
+    .hero { grid-template-columns: 1fr 320px; gap: 56px; margin-top: 44px; }
+    h1 { font-size: 44px; }
+    .phone { width: 300px; }
+    .features { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+    .feat.wide { grid-column: 1 / -1; }
+    .feat.full { grid-column: 1 / -1; }
+    .lock { grid-template-columns: 1fr 1fr; gap: 28px; padding: 26px 28px; }
+  }
+  @media (min-width: 1000px) {
+    .features { grid-template-columns: repeat(3, 1fr); }
+    .feat.wide { grid-column: span 2; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 200 200">
+    <rect width="200" height="200" rx="46" fill="#4F8A76"/>
+    <g transform="translate(0 8)">
+      <path d="M24,134 A76,76 0 0 1 176,134 Z" fill="#F8DDBF" fill-opacity="0.14"/>
+      <path d="M42,134 A58,58 0 0 1 158,134 Z" fill="#F8DDBF"/>
+      <rect x="34" y="133" width="132" height="3" rx="1.5" fill="#F8DDBF" fill-opacity="0.5"/>
+      <g transform="rotate(-38 100 112)">
+        <rect x="45" y="92" width="110" height="40" rx="20" fill="#1E3B31" fill-opacity="0.22" transform="translate(2 5)"/>
+        <path d="M65,92 H100 V132 H65 A20,20 0 0 1 65,92 Z" fill="#FFFFFF"/>
+        <path d="M100,92 H135 A20,20 0 0 1 135,132 H100 Z" fill="#EEF5F1"/>
+        <rect x="99" y="92" width="2" height="40" fill="#4F8A76" fill-opacity="0.22"/>
+        <path d="M110,99 H131 A12,12 0 0 1 140,103" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-opacity="0.9"/>
+      </g>
+    </g>
+  </symbol>
+</svg>
+
+<div class="wrap">
+  <nav class="top">
+    <a class="back" href="/">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
+      应用商店
+    </a>
+    <span class="site">leafy.fxxkopenai.com</span>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <div class="brand">
+        <svg viewBox="0 0 200 200" aria-hidden="true"><use href="#logo"/></svg>
+        <div>
+          <h1>吃了吗</h1>
+          <p>服药打卡 · 安卓</p>
+        </div>
+      </div>
+      <p class="story">做完手术之后，我每天早上 6:30 要吃药。吃完常常又回去睡一会儿，醒来就记不清刚才到底吃没吃。再吃一次怕多了，不吃又怕漏了。</p>
+      <p class="story">所以做了这个小 App，只管一件事：醒来时一眼就能确认，今天的药吃过没有。</p>
+      <div class="cta">
+        <a class="btn" id="dl" href="/download/todayeat.apk">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3v10M5.5 8.5 10 13l4.5-4.5M4 16.5h12"/></svg>
+          下载安卓版
+        </a>
+        <p class="meta" id="meta">
+          <span>todayeat.apk · Android 8.0 及以上</span>
+          <span id="m-ver" hidden>版本 <b class="num"></b></span>
+          <span id="m-size" hidden>大小 <b class="num"></b></span>
+          <button type="button" class="sha" id="m-sha" hidden title="点一下复制完整 SHA-256">SHA-256 <code></code></button>
+        </p>
+      </div>
+    </div>
+
+    <div class="stage" aria-label="App 首页示意">
+      <div class="phone">
+        <div class="screen">
+          <div class="status num"><span>06:41</span><i></i></div>
+          <p class="date num">10 月 29 日 · 周四</p>
+          <div class="today">
+            <div class="tick"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 10.5 3.2 3.2L15 7"/></svg></div>
+            <p class="big">今天的药吃过了</p>
+            <p class="sub num">06:32 · 安心再睡会儿</p>
+            <div class="pill">
+              <span class="thumb" aria-hidden="true"></span>
+              <span><b>术后用药 · 1 片</b>提醒 06:30 · 附 1 张照片</span>
+            </div>
+          </div>
+          <p class="streak num">连续 182 天没落下</p>
+          <div class="cal">
+            <div class="cal-h"><b>2026 年 10 月</b><span>点某天看详情</span></div>
+            <div class="grid7" aria-hidden="true">
+              <div class="w">一</div><div class="w">二</div><div class="w">三</div><div class="w">四</div><div class="w">五</div><div class="w">六</div><div class="w">日</div>
+              <div></div><div></div><div></div>
+              <div class="d t">1</div><div class="d t">2</div><div class="d t">3</div><div class="d t">4</div>
+              <div class="d t">5</div><div class="d t">6</div><div class="d p">7</div><div class="d t">8</div><div class="d t">9</div><div class="d t">10</div><div class="d t">11</div>
+              <div class="d m">12</div><div class="d t">13</div><div class="d t">14</div><div class="d t">15</div><div class="d t">16</div><div class="d t">17</div><div class="d t">18</div>
+              <div class="d t">19</div><div class="d t">20</div><div class="d t">21</div><div class="d p">22</div><div class="d t">23</div><div class="d t">24</div><div class="d t">25</div>
+              <div class="d t">26</div><div class="d t">27</div><div class="d t">28</div><div class="d now">29</div><div class="d f">30</div><div class="d f">31</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">能做什么</p>
+    <h2>都围着「吃没吃」这一件事</h2>
+    <p class="lede">没有药品库，没有统计图表，也不给用药建议。吃什么、吃多少，听医生的。</p>
+
+    <div class="features">
+      <article class="feat wide">
+        <h3>到点提醒，通知上按一下就记上</h3>
+        <p>每种药单独设提醒时间和频率：每天、工作日、周末、自选星期，或者每隔几天。半睡半醒时不用打开 App，在通知上点「已吃」就行。没点的话，过 10 分钟再提醒一次，最多 3 次，间隔可以改。</p>
+        <div class="demo">
+          <div class="noti">
+            <div class="app"><svg viewBox="0 0 200 200" aria-hidden="true"><use href="#logo"/></svg>吃了吗 · <span class="num">06:30</span></div>
+            <b>该吃药了</b>
+            <span>术后用药 · 1 片</span>
+            <div class="acts"><span>已吃</span><span>10 分钟后再提醒</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="feat">
+        <h3>桌面小组件</h3>
+        <p>2×2 大小，放在桌面上。醒来不用解锁进 App，看一眼就知道。点一下打开 App。</p>
+        <div class="demo widgets">
+          <div class="widget"><small>今天</small><div><strong>06:32</strong><span>已吃</span></div></div>
+          <div class="widget no"><small>今天</small><div><strong>还没吃</strong><span class="num">提醒 06:30</span></div></div>
+        </div>
+      </article>
+
+      <article class="feat">
+        <h3>日历上看每一天</h3>
+        <p>一个月一页，每天一个格子。点哪天就看哪天的时间和照片，忘了点的可以补记，点错了可以撤销、改时间。</p>
+        <div class="demo legend">
+          <span><i style="background:var(--sage-soft);box-shadow:inset 0 0 0 1px var(--sage)"></i>吃了</span>
+          <span><i style="background:var(--amber-soft);box-shadow:inset 0 0 0 1px var(--amber)"></i>吃了一部分</span>
+          <span><i style="background:var(--clay-soft);box-shadow:inset 0 0 0 1px var(--clay)"></i>漏了</span>
+          <span><i style="border:1px dashed var(--ink3)"></i>不用吃 / 还没到</span>
+        </div>
+      </article>
+
+      <article class="feat">
+        <h3>拍一张留底</h3>
+        <p>打卡时顺手拍下药板或药盒，一天最多 4 张。醒来翻照片，抠掉的那一格就是证据。</p>
+      </article>
+
+      <article class="feat">
+        <h3>换手机、多台手机都在</h3>
+        <p>用户名加密码登录，打卡记录、提醒设置和照片在几台手机之间同步。内容先在手机上加密，服务器只存密文。</p>
+      </article>
+
+      <article class="feat full">
+        <h3>App 里直接更新</h3>
+        <p>有新版本时 App 会提示，下载、校验 SHA-256 后直接弹出安装，不用再回这个页面。</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">账号与加密</p>
+    <h2>服务器看不到你的记录</h2>
+    <div class="lock">
+      <div>
+        <h3>密码只在手机上用</h3>
+        <p>登录时，手机用你的密码算出两样东西：一把加密钥匙，留在本机；一串登录凭证，发给服务器。打卡记录和照片用这把钥匙加密之后才上传，服务器拿到的只是一堆密文。</p>
+      </div>
+      <div class="warn">
+        <h3>忘了密码，云端数据就找不回来</h3>
+        <p>因为钥匙是从密码算出来的，服务器那边也没有。忘了密码，云端的记录和照片谁也解不开，包括我。请把密码记在稳妥的地方。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <p class="eyebrow">安装</p>
+    <h2>在小米 / HyperOS 上安装</h2>
+    <ol class="steps">
+      <li>用手机自带的浏览器点上面的「下载安卓版」。从微信打开的话，先点右上角「···」，选「在浏览器中打开」。</li>
+      <li>点开下载好的 todayeat.apk。提示「禁止安装未知来源应用」时，按提示允许当前浏览器安装；被「纯净模式」拦下就选继续安装。
+        <span class="path">设置 → 隐私保护 → 特殊权限设置 → 安装未知应用 → 浏览器 → 允许</span></li>
+      <li>第一次打开时允许通知，否则到点不会响。</li>
+      <li>按 App 里的引导，把自启动打开、省电策略设成「无限制」。HyperOS 清后台比较狠，不设的话第二天早上可能收不到提醒。
+        <span class="path">设置 → 应用设置 → 应用管理 → 吃了吗 → 自启动：开启；省电策略：无限制</span></li>
+    </ol>
+  </section>
+
+  <footer>
+    吃了吗只记录你按下「已吃」的时间，不判断剂量，也不提供医疗建议。<br>
+    <a href="/">回到应用商店</a>，还有暖月和智能记账。
+  </footer>
+</div>
+<script>
+  (function () {
+    function $(id) { return document.getElementById(id); }
+    function formatSize(size) {
+      if (typeof size === 'number' && isFinite(size) && size > 0) {
+        return size > 1024 * 1024 ? (size / 1024 / 1024).toFixed(1) + ' MB' : String(Math.round(size)) + ' MB';
+      }
+      if (typeof size === 'string' && size.trim() && size.length < 16) {
+        return size.trim().replace(/^(\d+(?:\.\d+)?)\s*MB$/i, '$1 MB');
+      }
+      return '';
+    }
+    function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+      return new Promise(function (ok, fail) {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy') ? ok() : fail(); } catch (e) { fail(e); }
+        document.body.removeChild(ta);
+      });
+    }
+    var fullSha = '';
+    $('m-sha').addEventListener('click', function () {
+      if (!fullSha) return;
+      var code = this.querySelector('code');
+      var shortSha = code.textContent;
+      copyText(fullSha).then(function () {
+        code.textContent = '已复制'; code.classList.add('copied');
+      }, function () {
+        code.textContent = fullSha;
+      }).then(function () {
+        setTimeout(function () { code.textContent = shortSha; code.classList.remove('copied'); }, 1600);
+      });
+    });
+    if (!window.fetch) return;
+    fetch('/todayeat-version.json', { cache: 'no-store' })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (v) {
+        if (!v || typeof v !== 'object') return;
+        if (typeof v.versionName === 'string' && /^[\w.\-]{1,32}$/.test(v.versionName)) {
+          $('m-ver').querySelector('b').textContent = 'v' + v.versionName.replace(/^v/i, '');
+          $('m-ver').hidden = false;
+        }
+        var size = formatSize(v.size);
+        if (size) { $('m-size').querySelector('b').textContent = size; $('m-size').hidden = false; }
+        if (typeof v.sha256 === 'string' && /^[0-9a-f]{64}$/i.test(v.sha256)) {
+          fullSha = v.sha256.toLowerCase();
+          $('m-sha').querySelector('code').textContent = fullSha.slice(0, 8) + '…' + fullSha.slice(-6);
+          $('m-sha').title = '点一下复制完整 SHA-256：' + fullSha;
+          $('m-sha').hidden = false;
+        }
+        if (typeof v.apkUrl === 'string' && /^https:\/\/leafy\.fxxkopenai\.com\/download\/todayeat[\w.\-]*\.apk$/.test(v.apkUrl)) {
+          $('dl').href = v.apkUrl.replace('https://leafy.fxxkopenai.com', '');
+        }
+      })
+      .catch(function () { /* 读不到版本时按钮仍指向 /download/todayeat.apk */ });
+  })();
+</script>
+</body>
+</html>
