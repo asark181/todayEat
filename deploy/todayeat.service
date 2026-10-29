@@ -1,0 +1,27 @@
+[Unit]
+Description=TodayEat (吃了吗) sync server
+After=network.target
+
+[Service]
+User=todayeat
+Group=todayeat
+WorkingDirectory=/opt/todayeat/app
+Environment=TODAYEAT_DATA=/var/lib/todayeat
+ExecStart=/opt/todayeat/venv/bin/uvicorn app:app --host 127.0.0.1 --port 8096 --workers 1 --proxy-headers
+Restart=always
+RestartSec=3
+# 加固：只允许写数据目录
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/todayeat
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target
