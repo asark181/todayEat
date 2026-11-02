@@ -45,19 +45,7 @@
 - 字体：App 用系统字体；数字用等宽数字。网页标题可用 Noto Serif SC 增加人情味，正文 Noto Sans SC。
 - 图标：鼠尾草绿底，一颗白色胶囊斜放，后面半轮浅杏色的晨光。
 
-## 2. 部署拓扑（甲骨文 `oracle-main`）
-
-- 域名写在 `deploy/private/site.env`（不进 git），Cloudflare 终结 HTTPS，回源 nginx :80（**443 被其他服务占用，不要碰**）。
-- 已有：暖月 `nuanyue.service` 127.0.0.1:8090（`/api/` 兜底转发给它），记账 `bookkeeping.service` 127.0.0.1:8095（`/api/auth/`、`/api/user/`、`= /api/sync`）。
-- 新增：`todayeat.service` 127.0.0.1:**8096**，用户 `todayeat`，代码 `/opt/todayeat/app`，venv `/opt/todayeat/venv`，数据 `/var/lib/todayeat`（db + photos/），每日备份。
-- nginx 新增 `location /api/te/ → 8096`，`client_max_body_size 6m`。
-- 静态：
-  - 应用商店首页 `/` → `/opt/appstore/web/index.html`（nginx `location = /`），商店静态资源 `/store/...` → `/opt/appstore/web/store/`。
-  - 暖月原首页改由 `/nuanyue.html` 访问（nginx `location = /nuanyue.html { alias /opt/nuanyue/web/index.html; }`），**不改暖月的文件**，暖月 deploy 脚本照常覆盖 `/opt/nuanyue/web`。
-  - 记账下载页仍是 `/ledger.html`（在 `/opt/nuanyue/web`）。
-  - 吃了吗：`/todayeat.html`、`/todayeat-version.json`、`/download/todayeat.apk` 均来自 `/opt/todayeat/web`（nginx 精确 location）。
-
-## 3. 服务端 API（前缀 `/api/te`）
+## 2. 服务端 API（前缀 `/api/te`）
 
 统一错误：`{"status":"error","detail":"<中文>"}`；成功都带 `"status":"ok"`。鉴权头 `Authorization: Bearer <token>`。
 
@@ -87,7 +75,7 @@
 - 用户名：2–32 位，字母数字下划线中文均可，大小写不敏感唯一。`auth` 必须是 64 位 hex。
 - 每账号最多 10 个会话（多设备），超出淘汰最久未用的。令牌 32 字节随机，库里只存 sha256。
 - 限流：每 IP 120 次/分钟；登录/注册失败每 IP 10 分钟 20 次。
-- 每用户照片上限 3000 张。照片存 `/var/lib/todayeat/photos/<user_id>/<id>.bin`。
+- 每用户照片上限 3000 张。照片存 数据目录下的 `photos/<user_id>/<id>.bin`。
 
 ### 同步快照格式（明文 JSON，加密后放进 blob）
 
@@ -111,7 +99,7 @@
 
 `/todayeat-version.json`：`{"versionCode","versionName","url":"<SITE_URL>/todayeat.html","apkUrl":"<SITE_URL>/download/todayeat.apk","sha256","size","notes"}`
 
-## 4. Android
+## 3. Android
 
 - 包名 `com.todayeat.app`，应用名「吃了吗」，minSdk 26，target/compile 35，Kotlin 2.0.21 + Compose + Room + WorkManager（与记账同版本线）。
 - release 签名用独立 keystore（`android/keystore/`，gitignore；密码在 `deploy/private/`）。
