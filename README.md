@@ -49,11 +49,10 @@ android/   Kotlin + Jetpack Compose + Room + WorkManager
 server/    同步服务，接口都在 /api/te/ 下
 web/       下载页和应用列表页
 deploy/    部署脚本、systemd、nginx 补丁
-docs/      SPEC.md（数据模型、同步协议、接口）、DEPLOY.md
+docs/      SPEC.md：数据模型、同步协议、接口
 ```
 
 ## 文档
 
 - [docs/SPEC.md](docs/SPEC.md)：数据模型、提醒规则、加密同步协议
-- [docs/DEPLOY.md](docs/DEPLOY.md)：发布流程和服务器上的注意事项
 - [CHANGELOG.md](CHANGELOG.md)
