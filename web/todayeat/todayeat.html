@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>吃了吗</title>
+<meta name="description" content="吃了吗：服药打卡。安卓安装包下载。">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#3F7A66">
+<link rel="icon" href="/store/todayeat.svg" type="image/svg+xml">
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --fg: #1D1D1F;
+    --fg2: #6E6E73;
+    --line: rgba(0, 0, 0, .1);
+    --link: #0071E3;
+    --brand: #3F7A66;
+    --brand-2: #6FA48F;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "HarmonyOS Sans SC", "MiSans", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000000;
+      --fg: #F5F5F7;
+      --fg2: #A1A1A6;
+      --line: rgba(255, 255, 255, .14);
+      --link: #2997FF;
+      --brand: #2F5E4E;
+      --brand-2: #3F7A66;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--link); text-decoration: none; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 8px; }
+  .wrap { width: min(980px, calc(100% - 40px)); margin: 0 auto; }
+
+  /* 顶部横幅：用图标的主色铺底 */
+  .hero {
+    background:
+      radial-gradient(120% 140% at 15% 0%, var(--brand-2) 0%, transparent 60%),
+      linear-gradient(160deg, var(--brand) 0%, #2E5C4C 100%);
+    color: #FFFFFF;
+  }
+  .nav { height: 52px; display: flex; align-items: center; }
+  .nav a { color: rgba(255, 255, 255, .85); font-size: 15px; display: inline-flex; align-items: center; gap: 2px; }
+  .nav a:hover { color: #FFFFFF; }
+  .nav svg { width: 20px; height: 20px; }
+  .head { display: flex; align-items: center; gap: 22px; padding: 18px 0 36px; }
+  .head img {
+    flex: none;
+    width: 112px; height: 112px;
+    border-radius: 22.5%;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .28), 0 0 0 .5px rgba(255, 255, 255, .25);
+  }
+  h1 { margin: 0; font-size: 30px; line-height: 1.15; font-weight: 700; letter-spacing: -.01em; }
+  .cat { margin: 4px 0 0; font-size: 17px; font-weight: 600; color: rgba(255, 255, 255, .9); }
+  .price { margin: 2px 0 0; font-size: 13px; color: rgba(255, 255, 255, .72); }
+  .get {
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-top: 14px;
+    min-width: 88px; height: 32px; padding: 0 18px;
+    border-radius: 16px;
+    background: #FFFFFF; color: var(--brand);
+    font-size: 15px; font-weight: 700;
+  }
+  .get:active { opacity: .7; }
+
+  /* 数据栏 */
+  .stats { display: grid; grid-template-columns: repeat(5, minmax(96px, 1fr)); overflow-x: auto; padding: 14px 0; border-bottom: 1px solid var(--line); scrollbar-width: none; }
+  .stats::-webkit-scrollbar { display: none; }
+  .stats div { text-align: center; padding: 0 8px; }
+  .stats div + div { border-left: 1px solid var(--line); }
+  .stats small { display: block; color: var(--fg2); font-size: 11px; font-weight: 600; letter-spacing: .02em; }
+  .stats b { display: block; margin: 2px 0; font-size: 20px; font-weight: 700; color: var(--fg2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .stats span { color: var(--fg2); font-size: 12px; white-space: nowrap; }
+
+  /* 截图：彩色卡片 + 标题 + 手机画面 */
+  .shots {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 232px; gap: 14px;
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 20px;
+    padding: 22px 20px 6px; margin: 0 -20px;
+    scrollbar-width: none;
+  }
+  .shots::-webkit-scrollbar { display: none; }
+  .shot {
+    margin: 0;
+    scroll-snap-align: start;
+    border-radius: 22px;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--brand-2), var(--brand));
+    color: #FFFFFF;
+    height: 430px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .shot figcaption { padding: 22px 16px 16px; font-size: 19px; font-weight: 700; text-align: center; line-height: 1.3; }
+  .shot img {
+    width: 184px; height: auto;
+    border-radius: 22px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, .25);
+  }
+
+  section { padding: 22px 0 6px; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: 0; }
+  h2 { margin: 0 0 10px; font-size: 21px; font-weight: 700; }
+  p { margin: 0 0 12px; }
+  ul.feat { margin: 0 0 14px; padding-left: 1.2em; }
+  ul.feat li + li { margin-top: 4px; }
+  .muted { color: var(--fg2); }
+
+  .whats { display: flex; justify-content: space-between; color: var(--fg2); font-size: 14px; margin-bottom: 6px; }
+
+  .info { display: grid; grid-template-columns: 1fr; margin: 0 0 14px; }
+  .info div { padding: 10px 0; border-top: 1px solid var(--line); }
+  .info div:first-child { border-top: 0; }
+  .info dt { color: var(--fg2); font-size: 13px; }
+  .info dd { margin: 2px 0 0; overflow-wrap: anywhere; }
+  .sha { font: inherit; font-family: var(--mono); font-size: 13px; color: var(--fg); background: none; border: 0; padding: 0; text-align: left; cursor: pointer; overflow-wrap: anywhere; }
+
+  ol.steps { margin: 0 0 14px; padding-left: 1.3em; }
+  ol.steps li + li { margin-top: 6px; }
+
+  @media (min-width: 760px) {
+    .head { gap: 30px; padding: 26px 0 48px; }
+    .head img { width: 168px; height: 168px; }
+    h1 { font-size: 40px; }
+    .cat { font-size: 20px; }
+    .info { grid-template-columns: repeat(3, 1fr); column-gap: 28px; }
+    .info div:nth-child(-n+3) { border-top: 0; }
+    .info div:nth-child(n+4) { border-top: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <nav class="nav">
+      <a href="/"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg>App</a>
+    </nav>
+    <div class="head">
+      <img src="/store/todayeat.svg" alt="" width="168" height="168">
+      <div>
+        <h1>吃了吗</h1>
+        <p class="cat">服药打卡</p>
+        <p class="price">免费 · 无广告</p>
+        <a class="get" id="dl" href="/download/todayeat.apk">获取</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="stats">
+    <div><small>版本</small><b id="s-ver">—</b><span>最新</span></div>
+    <div><small>大小</small><b id="s-size">—</b><span>MB</span></div>
+    <div><small>兼容性</small><b>8.0+</b><span>Android</span></div>
+    <div><small>更新</small><b id="s-date">—</b><span id="s-year">&nbsp;</span></div>
+    <div><small>语言</small><b>ZH</b><span>简体中文</span></div>
+  </div>
+
+  <div class="shots" aria-label="截图">
+    <figure class="shot"><figcaption>按一下<br>就打卡</figcaption><img src="/todayeat-assets/shots/1-checkin.webp" alt="" width="540" height="1200" loading="lazy"></figure>
+    <figure class="shot"><figcaption>今天吃没吃<br>一眼看清</figcaption><img src="/todayeat-assets/shots/2-done.webp" alt="" width="540" height="1200" loading="lazy"></figure>
+    <figure class="shot"><figcaption>日历里<br>看每一天</figcaption><img src="/todayeat-assets/shots/3-cal.webp" alt="" width="540" height="1200" loading="lazy"></figure>
+    <figure class="shot"><figcaption>每条记录<br>都能修改</figcaption><img src="/todayeat-assets/shots/4-edit.webp" alt="" width="540" height="1200" loading="lazy"></figure>
+    <figure class="shot"><figcaption>药品与提醒<br>自己设定</figcaption><img src="/todayeat-assets/shots/5-settings.webp" alt="" width="540" height="1200" loading="lazy"></figure>
+  </div>
+
+  <section>
+    <p>到点提醒吃药，按一下就记上。打卡和日历是同一份记录的两种看法，哪天吃了、几点吃的，都能查到。</p>
+    <ul class="feat">
+      <li>每种药单独设提醒：每天、工作日、周末、指定星期或隔天</li>
+      <li>通知上直接点「已吃」，没点会再提醒，最多 3 次</li>
+      <li>一天可以记多条，每条可加备注和照片，随时修改、删除</li>
+      <li>登录后多台手机同步，数据先在手机上加密</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>新功能</h2>
+    <div class="whats"><span id="n-ver">版本</span><span id="n-date"></span></div>
+    <p id="n-notes" class="muted">—</p>
+  </section>
+
+  <section>
+    <h2>信息</h2>
+    <dl class="info">
+      <div><dt>类别</dt><dd>医疗</dd></div>
+      <div><dt>大小</dt><dd id="i-size">—</dd></div>
+      <div><dt>兼容性</dt><dd>需要 Android 8.0 或更高版本</dd></div>
+      <div><dt>语言</dt><dd>简体中文</dd></div>
+      <div><dt>价格</dt><dd>免费</dd></div>
+      <div><dt>包名</dt><dd>com.todayeat.app</dd></div>
+      <div><dt>权限</dt><dd>通知、精确闹钟、开机后重设提醒、忽略电池优化、安装更新</dd></div>
+      <div><dt>数据</dt><dd>同步前在手机上加密，服务器无法读取；忘记密码无法恢复云端数据</dd></div>
+      <div><dt>SHA-256</dt><dd><button type="button" class="sha" id="sha" title="点击复制">—</button></dd></div>
+    </dl>
+  </section>
+
+  <section>
+    <h2>安装</h2>
+    <ol class="steps">
+      <li>用手机浏览器打开本页点「获取」。微信里无法下载，请先选「在浏览器中打开」。</li>
+      <li>打开安装包，按提示允许浏览器安装未知应用。</li>
+      <li>首次打开时允许通知。</li>
+      <li>在 App 的 设置 › 提醒 中把省电策略设为「无限制」并开启自启动，锁屏后才能准时提醒。</li>
+    </ol>
+  </section>
+</main>
+
+<script>
+  (function () {
+    function $(id) { return document.getElementById(id); }
+    function sizeNumber(size) {
+      if (typeof size === 'number' && isFinite(size) && size > 0) return (size / 1048576).toFixed(1);
+      var m = typeof size === 'string' && size.match(/^\s*(\d+(?:\.\d+)?)\s*MB\s*$/i);
+      return m ? m[1] : '';
+    }
+    function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+      return new Promise(function (ok, fail) {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy') ? ok() : fail(); } catch (e) { fail(e); }
+        document.body.removeChild(ta);
+      });
+    }
+    var fullSha = '';
+    $('sha').addEventListener('click', function () {
+      if (!fullSha) return;
+      var el = this;
+      copyText(fullSha).then(function () {
+        el.textContent = '已复制';
+        setTimeout(function () { el.textContent = fullSha; }, 1400);
+      }, function () { /* 复制失败就保持原样，可以手动选中 */ });
+    });
+    if (!window.fetch) return;
+    var modified = null;
+    fetch('/todayeat-version.json', { cache: 'no-store' })
+      .then(function (r) {
+        if (!r.ok) throw new Error(r.status);
+        var d = new Date(r.headers.get('last-modified') || '');
+        if (!isNaN(d.getTime())) modified = d;
+        return r.json();
+      })
+      .then(function (v) {
+        if (!v || typeof v !== 'object') return;
+        if (typeof v.versionName === 'string' && /^[\w.\-]{1,32}$/.test(v.versionName)) {
+          var name = v.versionName.replace(/^v/i, '');
+          $('s-ver').textContent = name;
+          $('n-ver').textContent = '版本 ' + name;
+        }
+        var mb = sizeNumber(v.size);
+        if (mb) { $('s-size').textContent = mb; $('i-size').textContent = mb + ' MB'; }
+        if (modified) {
+          $('s-date').textContent = (modified.getMonth() + 1) + '/' + modified.getDate();
+          $('s-year').textContent = modified.getFullYear() + '年';
+          $('n-date').textContent = modified.getFullYear() + '年' + (modified.getMonth() + 1) + '月' + modified.getDate() + '日';
+        }
+        $('n-notes').textContent = typeof v.notes === 'string' && v.notes.trim() ? v.notes.trim() : '错误修复和体验改进。';
+        if (typeof v.sha256 === 'string' && /^[0-9a-f]{64}$/i.test(v.sha256)) {
+          fullSha = v.sha256.toLowerCase();
+          $('sha').textContent = fullSha;
+        }
+        if (typeof v.apkUrl === 'string' && v.apkUrl.indexOf(location.origin + '/download/todayeat') === 0 && /\.apk$/.test(v.apkUrl)) {
+          $('dl').href = v.apkUrl.slice(location.origin.length);
+        }
+      })
+      .catch(function () { $('n-notes').textContent = '暂时读不到版本信息。'; });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#4F8A76" android:pathData="M0,0h108v108h-108z" />
+    <!-- 晨光：半轮浅杏色的太阳 -->
+    <path android:fillColor="#F3D9B1" android:fillAlpha="0.9"
+        android:pathData="M30,76 A24,24 0 0,1 78,76 Z" />
+    <path android:fillColor="#F3D9B1" android:fillAlpha="0.35"
+        android:pathData="M22,80h64v2.5h-64z" />
+</vector>

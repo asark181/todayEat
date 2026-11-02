@@ -1,0 +1,2 @@
+# 吃了吗：每天 03:37 备份数据库（sqlite3 .backup，WAL 下安全）与照片目录（均为密文），保留 14 天。
+37 3 * * * todayeat mkdir -p /var/lib/todayeat/backups && sqlite3 /var/lib/todayeat/todayeat.db ".backup /var/lib/todayeat/backups/todayeat-$(date +\%F).db" && tar -C /var/lib/todayeat -czf /var/lib/todayeat/backups/photos-$(date +\%F).tgz photos && find /var/lib/todayeat/backups -maxdepth 1 \( -name 'todayeat-*.db' -o -name 'photos-*.tgz' \) -mtime +14 -delete

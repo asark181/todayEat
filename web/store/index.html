@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>App</title>
+<meta name="description" content="吃了吗、暖月、智能记账的安卓安装包。">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/store/favicon.svg" type="image/svg+xml">
+<style>
+  :root {
+    --bg: #FFFFFF;
+    --fg: #1D1D1F;
+    --fg2: #6E6E73;
+    --line: rgba(0, 0, 0, .1);
+    --pill: #F0F0F5;
+    --link: #0071E3;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "HarmonyOS Sans SC", "MiSans", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #000000;
+      --fg: #F5F5F7;
+      --fg2: #A1A1A6;
+      --line: rgba(255, 255, 255, .14);
+      --pill: #2C2C2E;
+      --link: #2997FF;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  a:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 10px; }
+  main { width: min(980px, calc(100% - 40px)); margin: 0 auto; padding: 48px 0 56px; }
+
+  h1 { margin: 0; font-size: 34px; line-height: 1.15; font-weight: 700; letter-spacing: -.01em; }
+  h2 {
+    margin: 36px 0 4px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    font-size: 21px; line-height: 1.25; font-weight: 700;
+  }
+
+  .apps { list-style: none; margin: 0; padding: 0; display: grid; }
+  .app { position: relative; display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 14px; padding: 12px 0; }
+  .app:not(:last-child)::after { content: ""; position: absolute; left: 78px; right: 0; bottom: 0; border-bottom: 1px solid var(--line); }
+  .app img {
+    width: 64px; height: 64px;
+    border-radius: 22.5%;
+    box-shadow: 0 0 0 .5px var(--line);
+  }
+  .app .text { display: flex; flex-direction: column; min-width: 0; }
+  .app b { font-size: 16px; font-weight: 600; }
+  .app span { color: var(--fg2); font-size: 13px; }
+  .get {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 72px; height: 30px; padding: 0 14px;
+    border-radius: 15px;
+    background: var(--pill);
+    color: var(--link);
+    font-size: 15px; font-weight: 700;
+  }
+  .get:active { opacity: .6; }
+
+  .apps.wide { grid-template-columns: 1fr; column-gap: 32px; }
+
+  .note { margin: 4px 0 0; color: var(--fg2); font-size: 13px; }
+  ol { margin: 10px 0 0; padding-left: 1.3em; color: var(--fg2); }
+  ol li + li { margin-top: 6px; }
+
+  @media (min-width: 760px) {
+    main { padding-top: 64px; }
+    h1 { font-size: 40px; }
+    .apps.wide { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>App</h1>
+
+  <h2>全部</h2>
+  <ul class="apps wide">
+    <li class="app">
+      <a href="/todayeat.html"><img src="/store/todayeat.svg" alt="吃了吗" width="64" height="64"></a>
+      <a class="text" href="/todayeat.html"><b>吃了吗</b><span>服药打卡</span></a>
+      <a class="get" href="/download/todayeat.apk">获取</a>
+    </li>
+    <li class="app">
+      <a href="/nuanyue.html"><img src="/icon.svg" alt="暖月" width="64" height="64"></a>
+      <a class="text" href="/nuanyue.html"><b>暖月</b><span>经期记录</span></a>
+      <a class="get" href="/download/nuanyue.apk">获取</a>
+    </li>
+    <li class="app">
+      <a href="/ledger.html"><img src="/store/bookkeeping.svg" alt="智能记账" width="64" height="64"></a>
+      <a class="text" href="/ledger.html"><b>智能记账</b><span>财务</span></a>
+      <a class="get" href="/download/bookkeeping.apk">获取</a>
+    </li>
+  </ul>
+
+  <h2>安装</h2>
+  <p class="note">仅支持 Android 8.0 及以上</p>
+  <ol>
+    <li>用手机浏览器打开本页。微信里无法下载，请先选「在浏览器中打开」。</li>
+    <li>打开下载的安装包，按提示允许浏览器安装未知应用。小米 / HyperOS 在 设置 › 隐私保护 › 特殊权限设置 › 安装未知应用。</li>
+    <li>以后的更新在 App 内完成。</li>
+  </ol>
+</main>
+</body>
+</html>

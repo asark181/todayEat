@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="吃了吗">
+  <rect width="200" height="200" rx="46" fill="#4F8A76"/>
+  <g transform="translate(0 8)">
+    <path d="M24,134 A76,76 0 0 1 176,134 Z" fill="#F8DDBF" fill-opacity="0.14"/>
+    <path d="M42,134 A58,58 0 0 1 158,134 Z" fill="#F8DDBF"/>
+    <rect x="34" y="133" width="132" height="3" rx="1.5" fill="#F8DDBF" fill-opacity="0.5"/>
+    <g transform="rotate(-38 100 112)">
+      <rect x="45" y="92" width="110" height="40" rx="20" fill="#1E3B31" fill-opacity="0.22" transform="translate(2 5)"/>
+      <path d="M65,92 H100 V132 H65 A20,20 0 0 1 65,92 Z" fill="#FFFFFF"/>
+      <path d="M100,92 H135 A20,20 0 0 1 135,132 H100 Z" fill="#EEF5F1"/>
+      <rect x="99" y="92" width="2" height="40" fill="#4F8A76" fill-opacity="0.22"/>
+      <path d="M110,99 H131 A12,12 0 0 1 140,103" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-opacity="0.9"/>
+    </g>
+  </g>
+</svg>

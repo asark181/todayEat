@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="paper">#F6F3EE</color>
+    <color name="card">#FFFFFF</color>
+    <color name="ink">#2B2722</color>
+    <color name="ink2">#6E665C</color>
+    <color name="ink3">#A39A8E</color>
+    <color name="sage">#4F8A76</color>
+    <color name="sage_soft">#E3EFE9</color>
+    <color name="amber">#D9A24A</color>
+    <color name="amber_soft">#F8EDD6</color>
+    <color name="clay">#C9785D</color>
+    <color name="icon_bg">#4F8A76</color>
+    <color name="icon_glow">#F3D9B1</color>
+</resources>
